@@ -1,0 +1,77 @@
+.intro {
+    padding-top: 25px;
+}
+
+.cover {
+    width: 1600px;
+    height: 800px;
+    margin: 0 auto;
+    background: #fce6b7b3;
+    border-radius: 50px;
+    padding-top: 37px;
+    position: relative;
+}
+
+.shool {
+    font-family: 'Montserrat Alternates', sans-serif;
+    font-size: 30px;
+    font-weight: 500;
+    line-height: 100%;
+    text-align: center;
+}
+
+/* Картинки прижимаем к низу по краям */
+.cornflower1 {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+.cornflower2 {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+/* Центрируем текст и кнопку */
+.cornflowers_and_text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.complecs_button {
+    text-align: center;
+}
+
+.umk {
+    font-family: 'Cormorant SC', serif;
+    font-size: 48px;
+    font-weight: 700;
+    text-align: center;
+    color: #5f2d1e;
+    width: 692px;
+    margin: 0 auto;
+}
+
+.begin {
+    width: 314px;
+    font-family: 'Cormorant SC', serif;
+    font-size: 48px;
+    font-weight: 700;
+    text-align: center;
+    color: #5f2d1e;
+    background: #E6EBF5;
+    border: 3px solid #5F2D1E;
+    border-radius: 50px;
+    padding: 25px 72px;
+    margin-top: 40px;
+    cursor: pointer;
+}
+
+.begin:hover {
+    background: #5F2D1E;
+    color: #E6EBF5;
+    transition: all 0.3s;
+}

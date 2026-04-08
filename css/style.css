@@ -3,7 +3,8 @@
 }
 
 .cover {
-  width: 1600px;
+  width: 90%;
+  max-width: 1400px;
   height: 800px;
   margin: 0 auto;
   background: rgba(252, 230, 183, 0.7019607843);

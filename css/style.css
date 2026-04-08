@@ -1,3 +1,4 @@
+@charset "UTF-8";
 .intro {
   padding-top: 25px;
 }
@@ -97,30 +98,37 @@
   display: flex;
   flex-direction: column;
   gap: 45px;
-  width: 100%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.forma:hover {
+  transform: translateY(-5px);
 }
 
 .title_forma {
   font-family: "Cormorant SC", sans-serif;
-  font-size: 50px;
+  font-size: 45px;
   font-weight: 700;
-  line-height: 100%;
+  line-height: 1.2; /* лучше 1.2 для многострочного текста */
   text-align: center;
   color: #5F2D1E;
-  width: 512px;
+  width: 100%;
+  max-width: 100%;
+  word-wrap: break-word; /* перенос длинных слов */
+  word-break: break-word; /* принудительный перенос при необходимости */
+  white-space: normal; /* разрешает перенос */
 }
 
 .inputs {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   gap: 45px;
   width: 100%;
 }
 
 .input_log_pas {
   width: 100%;
-  margin: 0 auto;
   background: #f9fdff;
   border: 3px solid #5f2d1e;
   font-family: "Montserrat Alternates", sans-serif;
@@ -130,8 +138,16 @@
   text-align: left;
   border-radius: 50px;
   color: #5F2D1E;
-  padding: 20px 0 27px 17px;
+  padding: 20px 5px 27px 25px;
   box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+.input_log_pas:focus {
+  outline: none;
+  border-color: #9B3B2F;
+  box-shadow: 0 0 0 3px rgba(155, 59, 47, 0.2);
+  background: #ffffff;
 }
 
 .input_log_pas::-moz-placeholder {
@@ -139,7 +155,7 @@
   font-size: 23px;
   font-weight: 500;
   color: #3e1509;
-  opacity: 1;
+  opacity: 0.6;
 }
 
 .input_log_pas::placeholder {
@@ -147,7 +163,7 @@
   font-size: 23px;
   font-weight: 500;
   color: #3e1509;
-  opacity: 1;
+  opacity: 0.6;
 }
 
 .log_in {
@@ -162,6 +178,50 @@
   border-radius: 50px;
   padding: 25px 72px;
   cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.log_in:hover {
+  background: #5F2D1E;
+  color: #B1D8FF;
+  transform: scale(1.02);
+  box-shadow: 0 8px 20px rgba(95, 45, 30, 0.3);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .forma {
+    padding: 40px 30px;
+    border-radius: 60px;
+  }
+  .title_forma {
+    font-size: 32px;
+    word-wrap: break-word;
+    word-break: break-word;
+  }
+  .log_in {
+    width: 100%;
+    font-size: 32px;
+    padding: 20px;
+  }
+  .input_log_pas {
+    font-size: 18px;
+    padding: 15px 5px 18px 20px;
+  }
+  .input_log_pas::-moz-placeholder {
+    font-size: 18px;
+  }
+  .input_log_pas::placeholder {
+    font-size: 18px;
+  }
+}
+.sections {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: rgba(252, 230, 183, 0.768627451);
+  padding: 20px;
 }
 
 .container {

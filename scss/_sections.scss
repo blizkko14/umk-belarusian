@@ -1,8 +1,267 @@
-.sections{
+/* ===== ОСНОВНЫЕ СТИЛИ + АДАПТИВ (исправлено перо) ===== */
+
+.sections {
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
     background: #fce6b7c4;
     padding: 20px;
+}
+
+.parts_exit {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    width: 100%;
+    margin-bottom: 80px;
+}
+
+.title_section {
+    font-family: "Cormorant SC", sans-serif;
+    font-size: clamp(42px, 7vw, 64px);
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+    color: #5f2d1e;
+    flex: 1;
+    margin: 0;
+}
+
+.exit {
+    font-family: "Cormorant SC", serif;
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 700;
+    color: #5f2d1e;
+    background: #b1d8ff;
+    border: 3px solid #5f2d1e;
+    padding: 8px 28px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+    min-width: 160px;
+}
+
+.exit:hover {
+    background: #5f2d1e;
+    color: #b1d8ff;
+    transform: scale(1.05);
+}
+
+.exit-placeholder {
+    width: 160px;
+    visibility: hidden;
+}
+
+/* ========== КАРТОЧКИ ========== */
+.parts {
+    display: flex;
+    margin-top: 95px;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.card,
+.card2 {
+    background: #dff1fe;
+    border: 3px solid #5f2d1e;
+    border-radius: 24px;
+    font-family: "Montserrat Alternates", serif;
+    font-size: clamp(32px, 5.5vw, 48px);
+    font-weight: 500;
+    text-align: center;
+    color: #5f2d1e;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    flex: 1;
+    min-width: 280px;
+    max-width: 420px;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    padding: 0 41px 98px 41px;
+    justify-content: space-between;
+}
+
+.card2 {
+    display: flex;
+    flex-direction: column;
+    padding: 41px 54px 0 54px;
+    position: relative;
+    justify-content: space-between;
+    overflow: hidden;           /* ← главное исправление: обрезает перо */
+}
+
+.card:hover,
+.card2:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Изображения */
+.img_teory img {
+    max-width: 100%;
+    height: auto;
+    transition: transform 0.3s ease;
+}
+
+.card:hover .img_teory img,
+.card2:hover .img_teory img {
+    transform: scale(1.05);
+}
+
+/* Перо — теперь надёжно внутри карточки */
+.pen {
+    position: absolute;
+    top: 322px;
+    left: 51%;
+    transform: translateX(-50%);
+    transition: transform 0.3s ease;
+    max-width: 85%;             /* дополнительная защита */
+    height: auto;
+    z-index: 2;
+}
+
+.card2:hover .pen {
+    transform: translateX(-50%) rotate(10deg);
+}
+
+/* ========== КНОПКИ (стрелка не заезжает) ========== */
+.run,
+.run2 {
+    width: 320px;
+    max-width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    border-radius: 50px;
+    background: #f9fdff;
+    border: 3px solid #5f2d1e;
+    font-family: "Cormorant SC", serif;
+    font-size: clamp(26px, 4.5vw, 32px);
+    font-weight: 700;
+    padding: 13px 50px 13px 30px;
+    color: #5f2d1e;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    align-self: center;
+}
+
+.run {
+    margin-top: 56px;
+}
+
+.run2 {
+    margin-top: 60px;
+    margin-bottom: 274px;
+}
+
+.run:hover,
+.run2:hover {
+    background: #5f2d1e;
+    color: #f9fdff;
+}
+
+.Arrow {
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: transform 0.3s ease, filter 0.3s ease;
+    width: 32px;
+    flex-shrink: 0;
+}
+
+.run:hover .Arrow,
+.run2:hover .Arrow {
+    filter: brightness(0) invert(1);
+    transform: translateY(-50%) translateX(6px);
+}
+
+/* ==================== АДАПТИВ ==================== */
+
+@media (max-width: 1200px) {
+    .parts {
+        gap: 20px;
+    }
+}
+
+@media (max-width: 992px) {
+    .card,
+    .card2 {
+        max-width: 380px;
+    }
+}
+
+@media (max-width: 768px) {
+    .parts_exit {
+        flex-direction: column;
+        gap: 25px;
+        margin-bottom: 50px;
+    }
+    
+    .exit-placeholder {
+        display: none;
+    }
+    
+    .exit {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .parts {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .card,
+    .card2 {
+        width: 100%;
+        max-width: 460px;
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+    
+    .pen {
+        top: 255px;        /* подгоняем под меньшую высоту */
+        max-width: 80%;
+    }
+    
+    .run2 {
+        margin-bottom: 180px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sections {
+        padding: 15px;
+    }
+    
+    .card,
+    .card2 {
+        border-radius: 20px;
+    }
+    
+    .card {
+        padding: 0 25px 80px 25px;
+    }
+    
+    .card2 {
+        padding: 35px 30px 0 30px;
+    }
+    
+    .pen {
+        top: 225px;        /* ещё ниже на очень маленьких экранах */
+        max-width: 75%;
+    }
+    
+    .run,
+    .run2 {
+        padding: 13px 45px 13px 25px;
+    }
 }

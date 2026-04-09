@@ -30,14 +30,14 @@
      font-family: "Cormorant SC", sans-serif;
     font-size: 45px;
     font-weight: 700;
-    line-height: 1.2;           /* лучше 1.2 для многострочного текста */
+    line-height: 1.2;           
     text-align: center;
     color: #5F2D1E;
     width: 100%;
     max-width: 100%;
-    word-wrap: break-word;      /* перенос длинных слов */
-    word-break: break-word;     /* принудительный перенос при необходимости */
-    white-space: normal;        /* разрешает перенос */
+    word-wrap: break-word;      
+    word-break: break-word;   
+    white-space: normal;        
 }
 
 .inputs {

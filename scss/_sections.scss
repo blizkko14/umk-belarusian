@@ -1,4 +1,3 @@
-/* ===== ОСНОВНЫЕ СТИЛИ + АДАПТИВ (исправлено перо) ===== */
 
 .sections {
     display: flex;
@@ -54,7 +53,7 @@
     visibility: hidden;
 }
 
-/* ========== КАРТОЧКИ ========== */
+
 .parts {
     display: flex;
     margin-top: 95px;
@@ -92,7 +91,7 @@
     padding: 41px 54px 0 54px;
     position: relative;
     justify-content: space-between;
-    overflow: hidden;           /* ← главное исправление: обрезает перо */
+    overflow: hidden;          
 }
 
 .card:hover,
@@ -113,14 +112,13 @@
     transform: scale(1.05);
 }
 
-/* Перо — теперь надёжно внутри карточки */
+
 .pen {
     position: absolute;
-    top: 322px;
-    left: 51%;
-    transform: translateX(-50%);
+  top: 345px;
+    left: 2px;
     transition: transform 0.3s ease;
-    max-width: 85%;             /* дополнительная защита */
+    max-width: 85%;            
     height: auto;
     z-index: 2;
 }
@@ -129,7 +127,7 @@
     transform: translateX(-50%) rotate(10deg);
 }
 
-/* ========== КНОПКИ (стрелка не заезжает) ========== */
+
 .run,
 .run2 {
     width: 320px;
@@ -137,19 +135,20 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 20px;
+    gap: clamp(12px, 3vw, 47px);   
     border-radius: 50px;
     background: #f9fdff;
     border: 3px solid #5f2d1e;
     font-family: "Cormorant SC", serif;
-    font-size: clamp(26px, 4.5vw, 32px);
+    font-size: clamp(24px, 4vw, 32px);
     font-weight: 700;
-    padding: 13px 50px 13px 30px;
+    padding: 13px 20px;
     color: #5f2d1e;
-    position: relative;
     cursor: pointer;
     transition: all 0.3s ease;
     align-self: center;
+    box-sizing: border-box;
+    white-space: nowrap;
 }
 
 .run {
@@ -167,23 +166,20 @@
     color: #f9fdff;
 }
 
+
 .Arrow {
-    position: absolute;
-    right: 24px;
-    top: 50%;
-    transform: translateY(-50%);
-    transition: transform 0.3s ease, filter 0.3s ease;
-    width: 32px;
+    width: clamp(45px, 4vw, 32px);
+    height: auto;
     flex-shrink: 0;
+    transition: transform 0.3s ease, filter 0.3s ease;
 }
 
 .run:hover .Arrow,
 .run2:hover .Arrow {
     filter: brightness(0) invert(1);
-    transform: translateY(-50%) translateX(6px);
+       transform: translateX(5px);
 }
 
-/* ==================== АДАПТИВ ==================== */
 
 @media (max-width: 1200px) {
     .parts {
@@ -228,7 +224,7 @@
     }
     
     .pen {
-        top: 255px;        /* подгоняем под меньшую высоту */
+        top: 255px;       
         max-width: 80%;
     }
     
@@ -256,7 +252,7 @@
     }
     
     .pen {
-        top: 225px;        /* ещё ниже на очень маленьких экранах */
+        top: 225px;      
         max-width: 75%;
     }
     

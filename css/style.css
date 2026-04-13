@@ -458,6 +458,161 @@
     padding: 13px 45px 13px 25px;
   }
 }
+/* ===== ОСНОВНЫЕ СТИЛИ ===== */
+.classes {
+  display: flex;
+  background: rgba(252, 230, 183, 0.768627451);
+  padding: 20px;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+}
+
+.list_classes {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 60px;
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.part1,
+.part2 {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: center;
+}
+
+/* Кнопки классов */
+.but_class {
+  font-family: "Cormorant SC", sans-serif;
+  font-size: 64px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  color: #5f2d1e;
+  padding: 30px 0;
+  width: 619px;
+  background: #dfedfe;
+  border: 3px solid #5f2d1e;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.but_class:hover {
+  background: #5f2d1e;
+  color: #dfedfe;
+  transform: translateY(-5px);
+}
+
+/* Кнопка "Назад" в левой колонке (видна на десктопе) */
+.back {
+  width: 188px;
+  height: 109px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 105px;
+  background: rgba(95, 45, 30, 0.8980392157);
+  border: 5px solid #b1d8ff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+/* Кнопка "Назад" в правой колонке (скрыта на десктопе) */
+.back2 {
+  display: none;
+  width: 188px;
+  height: 109px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 105px;
+  background: rgba(95, 45, 30, 0.8980392157);
+  border: 5px solid #b1d8ff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Стрелка */
+.arrow_back {
+  width: 50px;
+  height: auto;
+  display: block;
+}
+
+.back:hover,
+.back2:hover {
+  background: #5f2d1e;
+  transform: scale(1.02);
+}
+
+/* ===== АДАПТИВ (планшеты и телефоны) ===== */
+@media (max-width: 1356px) {
+  .back2 {
+    display: flex;
+    width: 300px;
+    font-size: 48px;
+    padding: 35px 0;
+  }
+  .back2 {
+    display: flex;
+    height: 90px;
+  }
+  .back {
+    display: none;
+  }
+  .list_classes {
+    gap: 15px;
+  }
+}
+@media (max-width: 792px) {
+  .but_class,
+  .back2 {
+    display: flex;
+    width: 300px;
+    font-size: 48px;
+    padding: 35px 0;
+    justify-content: center;
+  }
+  .back2 {
+    display: flex;
+    height: 90px;
+  }
+  .back {
+    display: none;
+  }
+  .list_classes {
+    gap: 0;
+  }
+}
+@media (max-width: 768px) {
+  .list_classes {
+    flex-direction: column;
+    align-items: center;
+  }
+  .back2 {
+    display: flex; /* показываем кнопку в правой колонке */
+  }
+  .but_class,
+  .back,
+  .back2 {
+    width: 280px;
+    font-size: 40px;
+    justify-content: center;
+  }
+  /* 🔥 НА МОБИЛЬНЫХ: скрываем back, показываем back2 */
+  .back {
+    display: none;
+  }
+}
 .container {
   width: 100%;
   max-width: 1600px;

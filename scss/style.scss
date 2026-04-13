@@ -1,6 +1,7 @@
 @use "./intro.scss"; 
 @use "./authorization";
 @use "./sections";
+@use "./classes";
 .container{
     width: 100%;
     max-width: 1600px;

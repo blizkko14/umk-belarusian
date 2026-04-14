@@ -637,8 +637,10 @@
   font-size: clamp(20px, 3vw, 32px);
 }
 
-.back-btn:hover {
-  transform: translateX(-5px);
+.back_btn:hover {
+  background: #5f2d1e;
+  color: #b1d8ff;
+  transform: scale(1.02);
 }
 
 .back-arrow {
@@ -805,7 +807,7 @@
   font-weight: 700;
   padding: 20px 25px;
   border-radius: 10px;
-  background: #F0F7FF;
+  background: #f0f7ff;
   cursor: pointer;
   transition: all 0.3s ease;
   border: 4px solid #5f2d1e;
@@ -818,7 +820,7 @@
 
 .topic_block:hover {
   background: #5f2d1e;
-  color: #F0F7FF;
+  color: #f0f7ff;
   transform: translateY(-3px);
 }
 
@@ -858,8 +860,8 @@
 }
 
 .topic_icon.complete:hover {
-  background: #4CAF50;
-  border-color: #4CAF50;
+  background: #4caf50;
+  border-color: #4caf50;
   color: white;
 }
 
@@ -1117,6 +1119,108 @@
   }
   .topic-card {
     padding: 12px;
+  }
+}
+.dop_matirial {
+  font-family: "Montserrat Alternates", sans-serif;
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1.2;
+  text-align: center;
+  color: #5f2d1e;
+  padding: 41px 0;
+  max-width: 1290px;
+  width: 100%;
+  margin: 0 auto;
+  background: #DFF1FE;
+  border: 3px solid #5f2d1e;
+  border-radius: 24px;
+  white-space: nowrap;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 44px;
+}
+
+.text_teory_wrapper {
+  font-family: "Montserrat Alternates", sans-serif;
+  font-size: 35px;
+  font-weight: 500;
+  line-height: 1.2;
+  text-align: center;
+  color: #5f2d1e;
+  padding: 56px 29px;
+}
+
+.start_test {
+  width: 553px;
+  font-family: "Cormorant SC", serif;
+  font-size: 48px;
+  font-weight: 700;
+  text-align: center;
+  color: #5f2d1e;
+  background: #E6EBF5;
+  border: 3px solid #5F2D1E;
+  border-radius: 50px;
+  padding: 17px 57px;
+  margin-top: 70px;
+  cursor: pointer;
+}
+
+.start_test {
+  width: 553px;
+  font-family: "Cormorant SC", serif;
+  font-size: 48px;
+  font-weight: 700;
+  text-align: center;
+  color: #5f2d1e;
+  background: #E6EBF5;
+  border: 3px solid #5F2D1E;
+  border-radius: 50px;
+  padding: 17px 57px;
+  margin-top: 70px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.arrow_test {
+  width: 120px; /* ← уменьшил с 120px до 40px */
+  height: auto;
+  transition: transform 0.3s ease;
+}
+
+.start_test:hover {
+  background: #5f2d1e;
+  color: #E6EBF5;
+}
+
+.start_test:hover .arrow_test {
+  filter: brightness(0) invert(1);
+  transform: translateX(5px);
+}
+
+@media (max-width: 768px) {
+  .dop_matirial {
+    white-space: normal;
+    font-size: clamp(24px, 5vw, 35px);
+    padding: 30px 15px;
+    width: 90%;
+  }
+  .start_test {
+    width: 90%;
+    font-size: clamp(28px, 5vw, 48px);
+    padding: 15px 30px;
+    gap: 15px;
+  }
+  .arrow_test {
+    width: 30px;
   }
 }
 .container {

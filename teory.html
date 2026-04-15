@@ -1,30 +1,255 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="be">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ВМК</title>
+    <title>Стварыць канспект - УМК</title>
     <link rel="stylesheet" href="css/null.css" />
     <link rel="stylesheet" href="css/fonts.css" />
     <link rel="stylesheet" href="css/style.css" />
-  </head>
-  <body>
+    
+    <!-- Подключение Quill (текстовый редактор с поддержкой картинок) -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+</head>
+<body>
     <main>
-      <section class="topics">
-        <div class="container">
-          <div class="topics_header">
-            <button class="back_btn" onclick="history.back()">
-              <img src="./img/Arrow_back.svg" alt="Назад" class="back-arrow" />
-            </button>
-            <div class="block_title">
-              <h1 class="topics_title">Правапiс</h1>
+        <section class="forma_teory">
+            <div class="container">
+                <!-- Шапка -->
+                <div class="topics_header">
+                    <button class="back_btn" onclick="history.back()">
+                        <img src="./img/Arrow_back.svg" alt="Назад" class="back-arrow" />
+                    </button>
+                    <div class="block_title">
+                        <h1 class="topics_title">Стварыць новы канспект</h1>
+                    </div>
+                </div>
+                
+                <!-- Форма -->
+                <div class="forma_teory_wrapper">
+                    <!-- Назва тэмы -->
+                    <div class="title_teory">
+                        <h2 class="title_forma">Тэма:</h2>
+                        <input type="text" class="input_title" id="conspectTitle" placeholder="Напрыклад: Правапіс -Н- і -НН-" />
+                    </div>
+                    
+                    <!-- Клас -->
+                    <div class="class_forma">
+                        <h2 class="title_forma">Клас:</h2>
+                        <select id="class" name="class" required>
+                            <option value="">-- Выберыце клас --</option>
+                            <option value="5">5 клас</option>
+                            <option value="6">6 клас</option>
+                            <option value="7">7 клас</option>
+                            <option value="8">8 клас</option>
+                            <option value="9">9 клас</option>
+                            <option value="10">10 клас</option>
+                            <option value="11">11 клас</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Раздзел -->
+                    <div class="class_forma">
+                        <h2 class="title_forma">Раздзел:</h2>
+                        <select id="topic" name="topic">
+                            <option value="">-- Выберыце раздзел --</option>
+                            <option value="fonetyka">Фанетыка</option>
+                            <option value="leksika">Лексіка</option>
+                            <option value="marfalogia">Марфалогія</option>
+                            <option value="sintaksis">Сінтаксіс</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Текстовый редактор Quill -->
+                    <div class="content_zmest">
+                        <h2 class="title_forma">📝 Змест канспекта:</h2>
+                        <div id="editor-container" style="height: 350px;"></div>
+                        <textarea id="conspectContent" name="content" style="display: none;"></textarea>
+                    </div>
+                    
+                    <!-- Дадатковыя матэрыялы -->
+                    <div class="dop_content_forma">
+                        <h2 class="title_forma">📎 Дадатковыя матэрыялы</h2>
+                        <div class="forma_dop_material">
+                            <button type="button" class="add_fail" onclick="document.getElementById('fileInput').click()">
+                                <img src="./img/plus_file.svg" alt="" class="plus_file"> Дадаць файл
+                            </button>
+                            <button type="button" class="add_link" onclick="addLink()">
+                                <img src="./img/plus_file.svg" alt="" class="plus_file"> Дадаць спасылку
+                            </button>
+                            <input type="file" id="fileInput" multiple style="display: none" onchange="handleFiles(this)">
+                            <div id="fileList" class="file-list"></div>
+                            <div id="linksList" class="links-list"></div>
+                        </div>
+                        
+                        <!-- Привязка к тесту -->
+                        <div class="form-group test-link-group">
+                            <label>🔗 Прывязка да тэста:</label>
+                            <div class="test-link-wrapper">
+                                <select id="testSelect" class="form-select">
+                                    <option value="">-- Не выбрана --</option>
+                                    <option value="1">Правапіс -Н- і -НН- (5 клас)</option>
+                                    <option value="2">Фанетыка (5 клас)</option>
+                                    <option value="3">Назоўнік (6 клас)</option>
+                                    <option value="4">Дзеяслоў (7 клас)</option>
+                                </select>
+                                <button type="button" class="btn-test-link" onclick="viewSelectedTest()">📋 Паглядзець тэст</button>
+                            </div>
+                            <small class="form-hint">💡 Калі вы прывяжаце тэст, на старонцы канспекта з'явіцца кнопка "Перайсці да тэста"</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Кнопки сохранить/отменить -->
+                    <div class="form-buttons">
+                        <button type="button" class="btn_submit" onclick="saveConspect()">Захаваць</button>
+                        <button type="button" class="btn_cancel" onclick="history.back()">Адмяніць</button>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="text_teory_wrapper"></div>
-          <div class="dop_matirial"><h2 class="title_dop_material"> 📎 Дадатковыя матэрыялы:</h2></div>
-          <button class="start_test">Прайсці тэст <img src="./img/Arrow_teast.svg" alt="" class="arrow_test"></button>
-        </div>
-      </section>
+        </section>
     </main>
-  </body>
+    
+    <script>
+        // Инициализация Quill (с поддержкой изображений)
+        var quill = new Quill('#editor-container', {
+            theme: 'snow',
+            placeholder: 'Увядзіце тэкст канспекта...',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'align': [] }],
+                    ['link', 'image'],   // ← кнопки для ссылок и изображений
+                    ['clean']
+                ]
+            }
+        });
+        
+        // Обработка вставки изображений (превращаем в base64)
+        quill.getModule('toolbar').addHandler('image', function() {
+            const input = document.createElement('input');
+            input.setAttribute('type', 'file');
+            input.setAttribute('accept', 'image/*');
+            input.click();
+            
+            input.onchange = function() {
+                const file = input.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const range = quill.getSelection(true);
+                    quill.insertEmbed(range.index, 'image', e.target.result);
+                };
+                
+                reader.readAsDataURL(file);
+            };
+        });
+        
+        // Функция сохранения конспекта
+        function saveConspect() {
+            const title = document.getElementById('conspectTitle').value;
+            const classValue = document.getElementById('class').value;
+            const topic = document.getElementById('topic').value;
+            const content = quill.root.innerHTML;  // HTML содержимое редактора
+            const testId = document.getElementById('testSelect').value;
+            
+            if (!title) {
+                alert('Калі ласка, увядзіце назву тэмы');
+                return;
+            }
+            
+            const conspectData = {
+                title: title,
+                class: classValue,
+                topic: topic,
+                content: content,
+                testId: testId,
+                files: getFilesList(),
+                links: getLinksList()
+            };
+            
+            console.log('Дадзеныя канспекта:', conspectData);
+            alert('Канспект паспяхова захаваны!');
+            
+            // Здесь будет отправка на сервер
+            // fetch('/api/add-conspect', { method: 'POST', body: JSON.stringify(conspectData) })
+        }
+        
+        // Работа с файлами
+        let uploadedFiles = [];
+        
+        function handleFiles(input) {
+            const files = Array.from(input.files);
+            uploadedFiles.push(...files);
+            updateFileList();
+        }
+        
+        function updateFileList() {
+            const container = document.getElementById('fileList');
+            container.innerHTML = uploadedFiles.map((file, index) => `
+                <div class="file-item">
+                    <span>📄 ${file.name} (${(file.size / 1024).toFixed(1)} KB)</span>
+                    <button type="button" class="remove-file" onclick="removeFile(${index})">🗑️</button>
+                </div>
+            `).join('');
+        }
+        
+        function removeFile(index) {
+            uploadedFiles.splice(index, 1);
+            updateFileList();
+        }
+        
+        function getFilesList() {
+            return uploadedFiles.map(f => f.name);
+        }
+        
+        // Работа со ссылками
+        let links = [];
+        
+        function addLink() {
+            const url = prompt('Увядзіце спасылку (https://...):');
+            if (url && url.startsWith('http')) {
+                links.push(url);
+                updateLinksList();
+            } else if (url) {
+                alert('Калі ласка, увядзіце карэктную спасылку (пачынаецца з http:// або https://)');
+            }
+        }
+        
+        function updateLinksList() {
+            const container = document.getElementById('linksList');
+            container.innerHTML = links.map((link, index) => `
+                <div class="file-item">
+                    <span>🔗 <a href="${link}" target="_blank">${link}</a></span>
+                    <button type="button" class="remove-file" onclick="removeLink(${index})">🗑️</button>
+                </div>
+            `).join('');
+        }
+        
+        function removeLink(index) {
+            links.splice(index, 1);
+            updateLinksList();
+        }
+        
+        function getLinksList() {
+            return links;
+        }
+        
+        // Просмотр выбранного теста
+        function viewSelectedTest() {
+            const select = document.getElementById('testSelect');
+            const selectedId = select.value;
+            const selectedText = select.options[select.selectedIndex]?.text;
+            
+            if (selectedId && selectedId !== '') {
+                alert(`Адкрыццё тэста: ${selectedText}\nID тэста: ${selectedId}`);
+                // window.open(`test.html?id=${selectedId}`, '_blank');
+            } else {
+                alert("Калі ласка, выберыце тэст");
+            }
+        }
+    </script>
+</body>
 </html>

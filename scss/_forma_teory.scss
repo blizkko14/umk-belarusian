@@ -1,0 +1,353 @@
+/* ===== ФОРМА СОЗДАНИЯ КОНСПЕКТА ===== */
+.forma_teory {
+  background: #fce6b7c4;
+  padding: 40px 20px;
+  min-height: 100vh;
+}
+
+.forma_teory_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 50px;
+  gap: 20px;
+  position: relative;
+}
+
+.forma_teory_wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  background: #f0f7ff;
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.title_teory,
+.class_forma,
+.content_zmest,
+.dop_content_forma {
+  margin-bottom: 30px;
+}
+
+.title_forma_teory {
+  font-family: "Montserrat Alternates", sans-serif;
+  font-size: clamp(24px, 4vw, 30px);
+  font-weight: 500;
+  line-height: 1.2;
+  text-align: left;
+  color: #5f2d1e;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.input_title {
+  width: 100%;
+  padding: 15px 20px;
+  font-family: "Montserrat Alternates", sans-serif;
+  font-size: clamp(16px, 3vw, 18px);
+  font-weight: 500;
+  color: #5f2d1e;
+  border: 3px solid #5f2d1e;
+  border-radius: 16px;
+  background: #f9fdff;
+  box-sizing: border-box;
+}
+
+.input_title:focus {
+  outline: none;
+  border-color: #9b3b2f;
+  box-shadow: 0 0 0 3px rgba(155, 59, 47, 0.2);
+}
+
+/* Select */
+.class_forma {
+  position: relative;
+  margin-bottom: 30px;
+}
+
+select {
+  width: 100%;
+  padding: 15px 50px 15px 20px;
+  font-family: "Montserrat Alternates", sans-serif;
+  font-size: clamp(16px, 3vw, 18px);
+  font-weight: 500;
+  color: #5f2d1e;
+  background: #f9fdff;
+  border: 3px solid #5f2d1e;
+  border-radius: 16px;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.class_forma::after {
+  content: "▼";
+  font-size: 14px;
+  color: #5f2d1e;
+  position: absolute;
+  right: 20px;
+  top: 75%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  transition: transform 0.3s ease;
+}
+
+select:focus {
+  outline: none;
+  border-color: #9B3B2F;
+  box-shadow: 0 0 0 3px rgba(155, 59, 47, 0.2);
+}
+
+select option {
+  font-family: "Montserrat Alternates", sans-serif;
+  font-size: clamp(14px, 2.5vw, 16px);
+  font-weight: 500;
+  color: #5f2d1e;
+  background: #f9fdff;
+  padding: 10px;
+}
+
+select option:hover {
+  background: #5f2d1e;
+  color: #f9fdff;
+}
+
+/* CKEditor контейнер */
+.content_zmest {
+  margin-bottom: 30px;
+}
+
+.ck-editor__editable {
+  min-height: 300px;
+}
+
+/* Дадатковыя матэрыялы */
+.forma_dop_material {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+  background: #f9fdff;
+  border: 3px solid #5f2d1e;
+  border-radius: 24px;
+  padding: 47px 32px;
+  margin-bottom: 30px;
+}
+
+.add_fail,
+.add_link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: auto;
+  min-width: 180px;
+  padding: 12px 24px;
+  font-family: "Cormorant SC", serif;
+  font-size: clamp(16px, 3vw, 18px);
+  font-weight: 700;
+  color: #B1D8FF;
+  background: #5F2D1E;
+  border: 3px solid #B1D8FF;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.add_fail:hover,
+.add_link:hover {
+  background: #602413;
+  color: #ffffff;
+  transform: scale(1.02);
+}
+
+.add_fail:hover img,
+.add_link:hover img {
+  filter: brightness(0) invert(1);
+}
+
+.plus_file {
+  width: 20px;
+  height: 20px;
+}
+
+/* Привязка к тесту */
+.test-link-group {
+  margin-top: 20px;
+}
+
+.test-link-group label {
+  font-family: "Montserrat Alternates", sans-serif;
+  font-size: clamp(24px, 4vw, 30px);
+  font-weight: 500;
+  color: #5f2d1e;
+  display: block;
+  margin-bottom: 15px;
+}
+
+.test-link-wrapper {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.form-select {
+  flex: 1;
+  padding: 12px 20px;
+  font-family: "Inter", sans-serif;
+  font-size: clamp(14px, 2.5vw, 16px);
+  border: 3px solid #5f2d1e;
+  border-radius: 50px;
+  background: #f9fdff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.form-select:hover {
+  border-color: #9B3B2F;
+}
+
+.btn-test-link {
+  padding: 12px 24px;
+  font-family: "Cormorant SC", serif;
+  font-size: clamp(14px, 2.5vw, 18px);
+  font-weight: 700;
+  color: #5f2d1e;
+  background: #b1d8ff;
+  border: 3px solid #5f2d1e;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.btn-test-link:hover {
+  background: #5f2d1e;
+  color: #b8d8f8;
+  transform: scale(1.02);
+}
+
+.form-hint {
+  display: block;
+  font-family: "Inter", sans-serif;
+  font-size: clamp(12px, 2vw, 14px);
+  color: #3e1509;
+  opacity: 0.7;
+  margin-top: 10px;
+}
+
+.save_btn_wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.save_conspect_btn {
+  padding: 15px 40px;
+  font-family: "Cormorant SC", serif;
+  font-size: clamp(22px, 4vw, 28px);
+  font-weight: 700;
+  color: #B1D8FF;
+  background: #5F2D1E;
+  border: 3px solid #B1D8FF;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.save_conspect_btn:hover {
+  background: #692512;
+  transform: scale(1.02);
+}
+
+/* Hover для select */
+select:hover {
+  border-color: #9B3B2F;
+}
+
+/* ===== АДАПТИВ ===== */
+@media (max-width: 768px) {
+  .forma_teory_wrapper {
+    padding: 20px;
+  }
+
+  .title_forma_teory {
+    font-size: clamp(20px, 4vw, 24px);
+  }
+
+  .test-link-group label {
+    font-size: clamp(20px, 4vw, 24px);
+  }
+
+  .test-link-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-test-link {
+    text-align: center;
+    width: 100%;
+  }
+
+  .form-select {
+    width: 100%;
+  }
+
+  .add_fail,
+  .add_link {
+    width: 100%;
+    justify-content: center;
+    white-space: normal;
+    font-size: clamp(14px, 3vw, 16px);
+    min-width: auto;
+  }
+
+  .save_conspect_btn {
+    width: 100%;
+    font-size: clamp(18px, 4vw, 22px);
+    padding: 12px 20px;
+  }
+
+  .form-hint {
+    font-size: clamp(11px, 2.5vw, 12px);
+  }
+
+  select {
+    font-size: clamp(14px, 3vw, 16px);
+  }
+
+  .input_title {
+    font-size: clamp(14px, 3vw, 16px);
+  }
+}
+
+@media (max-width: 480px) {
+  .forma_dop_material {
+    padding: 30px 20px;
+  }
+
+  .add_fail,
+  .add_link {
+    padding: 10px 16px;
+    font-size: clamp(12px, 3vw, 14px);
+  }
+
+  .plus_file {
+    width: 16px;
+    height: 16px;
+  }
+
+  .btn-test-link {
+    font-size: clamp(12px, 2.5vw, 14px);
+    padding: 10px 16px;
+  }
+
+  .save_conspect_btn {
+    font-size: clamp(16px, 4vw, 20px);
+    padding: 10px 16px;
+  }
+}

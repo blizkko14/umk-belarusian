@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="be">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Стварыць канспект - УМК</title>
+    <link rel="stylesheet" href="css/null.css" />
+    <link rel="stylesheet" href="css/fonts.css" />
+    <link rel="stylesheet" href="css/style.css" />
+
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+  </head>
+  <body>
+    <main>
+      <section class="forma_teory">
+        <div class="container">
+          <div class="forma_teory_header">
+            <button class="back_btn" onclick="history.back()">
+              <img src="./img/Arrow_back.svg" alt="Назад" class="back-arrow" />
+            </button>
+            <div class="block_title">
+              <h1 class="topics_title">Стварыць новы канспект</h1>
+            </div>
+          </div>
+
+          <div class="forma_teory_wrapper">
+            <div class="title_teory">
+              <h2 class="title_forma_teory">Тэма:</h2>
+              <input type="text" class="input_title" />
+            </div>
+
+            <div class="class_forma">
+              <h2 class="title_forma_teory">Клас:</h2>
+              <select id="class" name="class" required>
+                <option value="">-- Выберыце клас --</option>
+                <option value="5">5 клас</option>
+                <option value="6">6 клас</option>
+                <option value="7">7 клас</option>
+                <option value="8">8 клас</option>
+                <option value="9">9 клас</option>
+                <option value="10">10 клас</option>
+                <option value="11">11 клас</option>
+              </select>
+            </div>
+
+            <div class="content_zmest">
+              <h2 class="title_forma_teory">📝 Змест</h2>
+              <textarea id="conspectContent" name="content"></textarea>
+            </div>
+
+            <div class="dop_content_forma">
+              <h2 class="title_forma_teory">📎 Дадатковыя матэрыялы</h2>
+              <div class="forma_dop_material">
+                <button class="add_fail">
+                  <img src="./img/plus_file.svg" alt="" class="plus_file" />
+                  Дадаць файл
+                </button>
+                <button class="add_link">
+                  <img src="./img/plus_file.svg" alt="" class="plus_file" />
+                  Дадаць спасылку
+                </button>
+                <div class="place_link"></div>
+              </div>
+
+              <div class="form-group test-link-group">
+                <label>🔗 Прывязка да тэста:</label>
+                <div class="test-link-wrapper">
+                  <select id="testSelect" class="form-select">
+                    <option value="">-- Не выбрана --</option>
+                    <option value="1">Правапіс -Н- і -НН- (5 клас)</option>
+                    <option value="2">Фанетыка (5 клас)</option>
+                    <option value="3">Назоўнік (6 клас)</option>
+                    <option value="4">Дзеяслоў (7 клас)</option>
+                  </select>
+                </div>
+                <small class="form-hint"
+                  >💡 Калі вы прывяжаце тэст, на старонцы канспекта з'явіцца
+                  кнопка "Перайсці да тэста"</small
+                >
+              </div>
+            </div>
+
+            <!-- 👇 Кнопка Захаваць -->
+            <div class="save_btn_wrapper">
+              <button class="save_conspect_btn" onclick="saveConspect()">
+                💾 Захаваць канспект
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      // Инициализация CKEditor 5 (с поддержкой изображений)
+      ClassicEditor.create(document.querySelector("#conspectContent"), {
+        toolbar: {
+          items: [
+            "heading",
+            "|",
+            "bold",
+            "italic",
+            "underline",
+            "strikethrough",
+            "|",
+            "insertImage", // ← кнопка вставки изображения
+            "bulletedList",
+            "numberedList",
+            "|",
+            "alignment",
+            "|",
+            "link",
+            "insertTable",
+            "|",
+            "undo",
+            "redo",
+          ],
+        },
+        heading: {
+          options: [
+            {
+              model: "paragraph",
+              title: "Звычайны тэкст",
+              class: "ck-heading_paragraph",
+            },
+            {
+              model: "heading1",
+              view: "h1",
+              title: "Загаловак 1",
+              class: "ck-heading_heading1",
+            },
+            {
+              model: "heading2",
+              view: "h2",
+              title: "Загаловак 2",
+              class: "ck-heading_heading2",
+            },
+            {
+              model: "heading3",
+              view: "h3",
+              title: "Загаловак 3",
+              class: "ck-heading_heading3",
+            },
+          ],
+        },
+        placeholder: "Увядзіце тэкст канспекта...",
+        language: "ru",
+      }).catch((error) => {
+        console.error("Памылка ініцыялізацыі CKEditor:", error);
+      });
+
+      function viewSelectedTest() {
+        const select = document.getElementById("testSelect");
+        const selectedId = select.value;
+        const selectedText = select.options[select.selectedIndex]?.text;
+
+        if (selectedId && selectedId !== "") {
+          alert(`Адкрыццё тэста: ${selectedText}\nID тэста: ${selectedId}`);
+        } else {
+          alert("Калі ласка, выберыце тэст");
+        }
+      }
+
+      function getContent() {
+        const editor = ClassicEditor.instances.get("conspectContent");
+        if (editor) {
+          const content = editor.getData();
+          console.log("Змест канспекта:", content);
+          return content;
+        }
+        return document.getElementById("conspectContent").value;
+      }
+    </script>
+  </body>
+</html>

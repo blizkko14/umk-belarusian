@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="be">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Тэмы</title>
+    <link rel="stylesheet" href="css/null.css" />
+    <link rel="stylesheet" href="css/fonts.css" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <main>
+      <section class="topics">
+        <div class="container">
+          <!-- Шапка с заголовком и кнопкой назад -->
+          <div class="topics_header">
+            <button class="back_btn" onclick="history.back()">
+              <img src="./img/Arrow_back.svg" alt="Назад" class="back-arrow" />
+            </button>
+            <div class="block_title">
+              <h1 class="topics_title">5 клас</h1>
+            </div>
+            <button
+              class="add-topic-btn"
+              id="addTopicBtn"
+              style="display: flex"
+            >
+              <img src="./img/plus.svg" alt="Дадаць" class="plus-icon" />
+            </button>
+          </div>
+
+          <!-- Список тем -->
+          <div class="topics_list" id="topicsList">
+            <div class="topic_block_wrapper2">
+              <div class="topic_block2">
+                Правапiс
+                <button class="start_test2">
+                  Пачаць тэст
+                  <img src="./img/Arrow_teast.svg" alt="" class="arrow_test2" />
+                </button>
+              </div>
+              <div class="topic_actions">
+                <button class="topic_icon edit" title="Рэдагаваць">✏️</button>
+                <button class="topic_icon delete" title="Выдаліць">🗑️</button>
+              </div>
+            </div>
+
+            <div class="topic_block_wrapper2">
+              <div class="topic_block2">
+                Правапiс
+                <button class="start_test2">
+                  Пачаць тэст
+                  <img src="./img/Arrow_teast.svg" alt="" class="arrow_test2" />
+                </button>
+              </div>
+              <div class="topic_actions">
+                <button class="topic_icon edit" title="Рэдагаваць">✏️</button>
+                <button class="topic_icon delete" title="Выдаліць">🗑️</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Модальное окно подтверждения удаления -->
+    <div id="deleteModal" class="modal" style="display: none">
+      <div class="modal-content">
+        <h3>⚠️ Пацверджанне выдалення</h3>
+        <p>
+          Вы сапраўды хочаце выдаліць тэму
+          <strong id="deleteTopicName"></strong>?
+        </p>
+        <p class="warning-text">
+          Увага! Пры выдаленні тэмы будуць выдалены таксама:<br />
+          • Усе канспекты гэтай тэмы<br />
+          • Усе тэсты гэтай тэмы
+        </p>
+        <div class="modal-buttons">
+          <button class="modal-btn confirm" id="confirmDeleteBtn">
+            Выдаліць
+          </button>
+          <button class="modal-btn cancel" id="cancelDeleteBtn">
+            Адмяніць
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/users-data.js"></script>
+    <script src="js/topics.js"></script>
+  </body>
+</html>

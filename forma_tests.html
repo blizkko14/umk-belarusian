@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="be">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Дадаць тэст</title>
+    <link rel="stylesheet" href="css/null.css" />
+    <link rel="stylesheet" href="css/fonts.css" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <main>
+      <section class="add-test">
+        <div class="container">
+          <!-- Хедер -->
+          <div class="add-test_header">
+            <button class="back_btn" onclick="history.back()">
+              <img src="./img/Arrow_back.svg" alt="Назад" class="back-arrow" />
+            </button>
+            <div class="block_title">
+              <h1 class="add-test_title">Дадаць новы тэст</h1>
+            </div>
+            <div class="placeholder_btn"></div>
+          </div>
+
+          <!-- Форма -->
+          <div class="add-test_form">
+            <!-- Назва тэста -->
+            <div class="form_field">
+              <label class="form_label">📝 Назва тэста</label>
+              <input
+                type="text"
+                class="form_input"
+                placeholder="Напрыклад: Правапіс -Н- і -НН-"
+                id="testTitle"
+              />
+            </div>
+
+            <!-- Клас і час -->
+            <div class="form_row">
+              <div class="form_field half">
+                <label class="form_label">Клас</label>
+                <select class="form_select" id="testClass">
+                  <option value="">-- Выберыце клас --</option>
+                  <option>5 клас</option>
+                  <option>6 клас</option>
+                  <option>7 клас</option>
+                  <option>8 клас</option>
+                  <option>9 клас</option>
+                  <option>10 клас</option>
+                  <option>11 клас</option>
+                </select>
+              </div>
+              <div class="form_field half">
+                <label class="form_label">Час (хвілін)</label>
+                <input
+                  type="number"
+                  class="form_input"
+                  value="5"
+                  id="testTime"
+                />
+              </div>
+            </div>
+
+            <!-- Пытанні -->
+            <div class="questions_section">
+              <div class="questions_header">
+                <label class="form_label">Пытанні</label>
+                <button
+                  type="button"
+                  class="add_question_btn"
+                  id="addQuestionBtn"
+                >
+                  + Дадаць пытанне
+                </button>
+              </div>
+              <div id="questionsContainer"></div>
+            </div>
+
+            <!-- Кнопка захавання -->
+            <div class="form_actions">
+              <button class="save_btn" id="saveTestBtn">
+                Захаваць тэст
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      let questionCounter = 0;
+
+      function addQuestion() {
+        questionCounter++;
+        const container = document.getElementById("questionsContainer");
+        const questionId = Date.now();
+
+        const questionDiv = document.createElement("div");
+        questionDiv.className = "question_card";
+        questionDiv.dataset.id = questionId;
+        questionDiv.innerHTML = `
+        <div class="question_header">
+            <span class="question_title">Пытанне ${questionCounter}</span>
+            <button class="remove_question_btn" onclick="this.closest('.question_card').remove()">✖</button>
+        </div>
+        <input type="text" class="question_text" placeholder="Тэкст пытання">
+        <div class="question_type">
+            <label><input type="radio" name="type_${questionId}" value="single" class="type_radio" checked onchange="toggleAnswersContainer(this)"> Адзінарны выбар</label>
+            <label><input type="radio" name="type_${questionId}" value="multiple" class="type_radio" onchange="toggleAnswersContainer(this)"> Множны выбар</label>
+            <label><input type="radio" name="type_${questionId}" value="text" class="type_radio" onchange="toggleAnswersContainer(this)"> Увод радка</label>
+        </div>
+        <div class="answers_container"></div>
+        <div class="text_answer_container" style="display: none;">
+            <input type="text" class="text_correct_answer" placeholder="Увядзіце правільны адказ">
+            <div class="text-answer-hint">Адказ будзе правярацца без уліку рэгістра</div>
+        </div>
+        <button class="add_answer_btn" onclick="addAnswer(this)">+ Дадаць адказ</button>
+    `;
+        container.appendChild(questionDiv);
+        addAnswer(questionDiv.querySelector(".add_answer_btn"));
+      }
+
+      function addAnswer(button) {
+        const container = button
+          .closest(".question_card")
+          .querySelector(".answers_container");
+        const answerRow = document.createElement("div");
+        answerRow.className = "answer_row";
+        answerRow.innerHTML = `
+        <input type="text" class="answer_input" placeholder="Варыянт адказу">
+        <label><input type="checkbox" class="correct_checkbox"> Правільны</label>
+        <button class="remove_answer_btn" onclick="this.parentElement.remove()">✖</button>
+    `;
+        container.appendChild(answerRow);
+      }
+
+      function toggleAnswersContainer(radio) {
+        const card = radio.closest(".question_card");
+        const answersContainer = card.querySelector(".answers_container");
+        const textAnswerContainer = card.querySelector(
+          ".text_answer_container",
+        );
+        const addAnswerBtn = card.querySelector(".add_answer_btn");
+        const isTextType = radio.value === "text";
+
+        if (isTextType) {
+          answersContainer.style.display = "none";
+          textAnswerContainer.style.display = "block";
+          addAnswerBtn.style.display = "none";
+        } else {
+          answersContainer.style.display = "block";
+          textAnswerContainer.style.display = "none";
+          addAnswerBtn.style.display = "inline-block";
+          if (answersContainer.children.length === 0) addAnswer(addAnswerBtn);
+        }
+      }
+
+      document
+        .getElementById("addQuestionBtn")
+        ?.addEventListener("click", addQuestion);
+      document.getElementById("saveTestBtn")?.addEventListener("click", () => {
+        const title = document.getElementById("testTitle")?.value;
+        if (!title) return alert("Калі ласка, увядзіце назву тэста");
+        alert(`Тэст "${title}" захаваны!`);
+      });
+
+      addQuestion();
+    </script>
+  </body>
+</html>

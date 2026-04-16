@@ -1563,15 +1563,15 @@ select:hover {
 /* Блок с темой и кнопкой теста (слева) */
 .topic_block2 {
   font-family: "Cormorant SC", serif;
-  font-size: clamp(20px, 4vw, 32px);
+  font-size: clamp(24px, 5vw, 40px);
   font-weight: 700;
   color: #3e1509;
   flex: 1;
   text-align: left;
   background: #f0f7ff;
-  border: 3px solid #5f2d1e;
-  border-radius: 24px;
-  padding: 15px 25px;
+  border: 4px solid #5f2d1e;
+  border-radius: 10px;
+  padding: 20px 25px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1585,8 +1585,8 @@ select:hover {
   font-size: clamp(14px, 2vw, 18px);
   font-weight: 700;
   color: #5f2d1e;
-  background: #E6EBF5;
-  border: 2px solid #5F2D1E;
+  background: #e6ebf5;
+  border: 2px solid #5f2d1e;
   border-radius: 50px;
   padding: 6px 16px;
   cursor: pointer;
@@ -1599,7 +1599,7 @@ select:hover {
 
 .start_test2:hover {
   background: #5f2d1e;
-  color: #E6EBF5;
+  color: #e6ebf5;
   transform: scale(1.02);
 }
 

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="be">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тэст</title>
+    <link rel="stylesheet" href="css/null.css">
+    <link rel="stylesheet" href="css/fonts.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <main>
+        <section class="test-student">
+            <div class="container">
+                <!-- Хедер тэста -->
+                <div class="test-header">
+                    <button class="back_btn" onclick="history.back()">
+                        <img src="./img/Arrow_back.svg" alt="Назад" class="back-arrow">
+                    </button>
+                    <div class="test-info-header">
+                        <h1 class="test-title-header">Правапіс -Н- і -НН- у прыметніках</h1>
+                        <div class="test-meta-header">
+                            <span>📊 3 пытанні</span>
+                            <span>⏱️ 5 хвілін</span>
+                                                </div>
+                    </div>
+                    <div class="placeholder_header"></div>
+                </div>
+
+                <!-- Прагрэс і таймер -->
+                <div class="test-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 33%;"></div>
+                    </div>
+                    <div class="progress-text">Пытанне 1 з 3</div>
+                    <div class="timer">⏱️ 04:52</div>
+                </div>
+
+                <!-- Пытанні -->
+                <div class="test-questions">
+                    <!-- Пытанне 1 (адзінарны выбар) -->
+                    <div class="question-card active" id="question1">
+                        <div class="question-text">
+                            1. У якім слове пішацца -Н-?
+                        </div>
+                        <div class="answers-list">
+                            <label class="answer-option">
+                                <input type="radio" name="q1" value="0"> каменны
+                            </label>
+                            <label class="answer-option">
+                                <input type="radio" name="q1" value="1"> срэбны
+                            </label>
+                            <label class="answer-option">
+                                <input type="radio" name="q1" value="2"> ранейшы
+                            </label>
+                            <label class="answer-option">
+                                <input type="radio" name="q1" value="3"> бетонны
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Пытанне 2 (множны выбар) -->
+                    <div class="question-card" id="question2">
+                        <div class="question-text">
+                            2. Выберыце словы, у якіх пішацца -Н-:
+                        </div>
+                        <div class="answers-list">
+                            <label class="answer-option">
+                                <input type="checkbox" name="q2" value="0"> вакзаны
+                            </label>
+                            <label class="answer-option">
+                                <input type="checkbox" name="q2" value="1"> аўсяны
+                            </label>
+                            <label class="answer-option">
+                                <input type="checkbox" name="q2" value="2"> арганізацыйны
+                            </label>
+                            <label class="answer-option">
+                                <input type="checkbox" name="q2" value="3"> шарсцяны
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Пытанне 3 (увод радка) -->
+                    <div class="question-card" id="question3">
+                        <div class="question-text">
+                            3. Устаўце прапушчаную літару: срэбн[ ] ланцуг
+                        </div>
+                        <div class="text-answer">
+                            <input type="text" class="text-input" placeholder="Увядзіце адказ">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Кнопкі навігацыі -->
+                <div class="test-navigation">
+                    <button class="nav-btn prev-btn" id="prevBtn" disabled>← Папярэдняе</button>
+                    <button class="nav-btn next-btn" id="nextBtn">Наступнае →</button>
+                </div>
+
+                <!-- Кнопка завяршэння -->
+                <div class="test-submit">
+                    <button class="submit-btn" id="submitBtn">📝 Завяршыць тэст</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Мадальнае акно з вынікам -->
+    <div id="resultModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3>🏆 Ваш вынік</h3>
+            <div class="result-score">
+                <span class="score-value">2</span> / <span class="score-total">3</span>
+            </div>
+            <div class="result-percent">67%</div>
+            <div class="result-grade">✅ Тэст здадзены!</div>
+            <div class="result-details">
+                <div class="detail-item correct">✅ Пытанне 1 — Правільна</div>
+                <div class="detail-item incorrect">❌ Пытанне 2 — Памылка</div>
+                <div class="detail-item correct">✅ Пытанне 3 — Правільна</div>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn close-modal">Закрыць</button>
+                <button class="modal-btn restart">🔄 Прайсці зноў</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Простая навігацыя па пытаннях
+        let currentQuestion = 1;
+        const totalQuestions = 3;
+
+        function showQuestion(n) {
+            document.querySelectorAll('.question-card').forEach((q, idx) => {
+                q.classList.toggle('active', idx + 1 === n);
+            });
+            document.getElementById('prevBtn').disabled = n === 1;
+            document.getElementById('nextBtn').disabled = n === totalQuestions;
+            document.querySelector('.progress-fill').style.width = `${(n / totalQuestions) * 100}%`;
+            document.querySelector('.progress-text').textContent = `Пытанне ${n} з ${totalQuestions}`;
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            if (currentQuestion > 1) {
+                currentQuestion--;
+                showQuestion(currentQuestion);
+            }
+        });
+
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            if (currentQuestion < totalQuestions) {
+                currentQuestion++;
+                showQuestion(currentQuestion);
+            }
+        });
+
+        // Мадальнае акно
+        const modal = document.getElementById('resultModal');
+        document.getElementById('submitBtn').addEventListener('click', () => {
+            modal.style.display = 'flex';
+        });
+        document.querySelectorAll('.close-modal, .restart').forEach(btn => {
+            btn.addEventListener('click', () => {
+                modal.style.display = 'none';
+                if (btn.classList.contains('restart')) {
+                    location.reload();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -78,3 +78,127 @@
     color: #E6EBF5;
     transition: all 0.3s;
 }
+/* ===== АДАПТЫЎ ДЛЯ ГАЛОЎНАЙ СТАРОНКІ ===== */
+
+/* ===== АДАПТЫЎ ДЛЯ ГАЛОЎНАЙ СТАРОНКІ ===== */
+
+/* Планшэты (да 992px) */
+@media (max-width: 992px) {
+    .intro {
+        padding-top: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+    }
+
+    .cover {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        min-height: 100vh;
+        border-radius: 0;
+        padding: 20px 20px 40px;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+    }
+
+    /* Назва школы прыціскаем да верху */
+    .cover .shool {
+        position: absolute;
+        top: 20px;
+        left: 0;
+        right: 0;
+        margin-top: 0;
+        margin-bottom: 0;
+        text-align: center;
+    }
+
+    .cornflower1,
+    .cornflower2 {
+        display: none;
+    }
+
+    .umk {
+        font-size: 38px;
+        width: auto;
+        margin-top: 0;
+    }
+
+    .begin {
+        width: 260px;
+        font-size: 38px;
+        padding: 20px 40px;
+    }
+}
+
+/* Тэлефоны (да 768px) */
+@media (max-width: 768px) {
+    .intro {
+        padding-top: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+    }
+
+    .cover {
+        width: 100%;
+        max-width: 100%;
+        min-height: 100vh;
+        border-radius: 0;
+        padding: 15px 15px 30px;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+    }
+
+    /* Назва школы прыціскаем да верху */
+    .cover .shool {
+        position: absolute;
+        top: 15px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-size: 18px;
+        line-height: 1.3;
+        padding: 0 10px;
+    }
+
+    .umk {
+        font-size: 32px;
+        margin-top: 0;
+    }
+
+    .begin {
+        width: 220px;
+        font-size: 32px;
+        padding: 15px 30px;
+        margin-top: 30px;
+    }
+}
+
+/* Вельмі маленькія тэлефоны (да 480px) */
+@media (max-width: 480px) {
+    .cover {
+        padding: 10px 10px 20px;
+    }
+
+    .cover .shool {
+        top: 10px;
+        font-size: 14px;
+    }
+
+    .umk {
+        font-size: 26px;
+    }
+
+    .begin {
+        width: 200px;
+        font-size: 26px;
+        padding: 12px 20px;
+    }
+}

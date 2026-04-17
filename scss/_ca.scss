@@ -113,7 +113,7 @@ width: clamp(70px, 12vw, 170px);
     flex-wrap: wrap;
     gap: 15px;
     padding-bottom: 15px;
-    border-bottom: 2px dashed #5f2d1e; /* Дададзена лінія */
+  
 }
 
 .section-title span {
@@ -375,6 +375,7 @@ width: clamp(70px, 12vw, 170px);
     .block_title3 {
         flex: 1;
         min-width: 0;
+        width: 450px;
     }
     
     .ce-title {
@@ -437,6 +438,7 @@ width: clamp(70px, 12vw, 170px);
     .add-ce-btn {
         order: 2;
         margin-left: auto;
+        margin-right: auto;
     }
     
     .section-title {

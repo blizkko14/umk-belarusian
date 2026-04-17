@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="be">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ЦЭ</title>
+    <link rel="stylesheet" href="css/null.css">
+    <link rel="stylesheet" href="css/fonts.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <main>
+        <section class="ce-page">
+            <div class="container">
+                <!-- Хедер -->
+                <div class="ce-header">
+                    <button class="back_btn" onclick="history.back()">
+                        <img src="./img/Arrow_back.svg" alt="Назад" class="back-arrow">
+                    </button>
+                    <div class="block_title">
+                        <h1 class="ce-title">Цэнтралізаваны экзамен</h1>
+                    </div>
+                    <button class="add-ce-btn" id="addMaterialBtn" style="display: none;">
+                        <img src="./img/plus.svg" alt="Дадаць" class="plus-icon">
+                    </button>
+                </div>
+
+                <!-- Апісанне -->
+                <div class="ce-description">
+                    <p>Дапаможныя матэрыялы для падрыхтоўкі да Цэнтралізаванага экзамену па беларускай мове</p>
+                </div>
+
+                <!-- Спіс матэрыялаў і тэстаў -->
+                <div class="ce-list" id="ceList">
+                    <!-- Тэсты -->
+                    <div class="ce-section">
+                        <div class="section-title">
+                            <span>📝 Тэсты для падрыхтоўкі</span>
+                            <button class="add-item-btn" data-type="test">+ Дадаць тэст</button>
+                        </div>
+                        <div class="tests-container" id="testsContainer">
+                            <!-- Тэст 1 -->
+                            <div class="ce-item test-item">
+                                <div class="item-info">
+                                    <div class="item-title">Практыкаванні па арфаграфіі</div>
+                                    <div class="item-meta">10 пытанняў | 20 хвілін</div>
+                                </div>
+                                <div class="item-actions">
+                                    <button class="item-btn start-test">▶ Пачаць</button>
+                                    <button class="item-btn edit-item">✏️</button>
+                                    <button class="item-btn delete-item">🗑️</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Матэрыялы -->
+                    <div class="ce-section">
+                        <div class="section-title">
+                            <span>📚 Дадатковыя матэрыялы</span>
+                            <button class="add-item-btn" data-type="material">+ Дадаць матэрыял</button>
+                        </div>
+                        <div class="materials-container" id="materialsContainer">
+                            <!-- Матэрыял 1 (спасылка) -->
+                            <div class="ce-item material-item link-item">
+                                <div class="item-info">
+                                    <div class="item-title">🔗 Правілы беларускай арфаграфіі</div>
+                                    <div class="item-meta">aduct.by/pravapis</div>
+                                </div>
+                                <div class="item-actions">
+                                    <a href="#" class="item-btn open-link" target="_blank">🔗 Адкрыць</a>
+                                    <button class="item-btn edit-item">✏️</button>
+                                    <button class="item-btn delete-item">🗑️</button>
+                                </div>
+                            </div>
+
+                            <!-- Матэрыял 2 (фота/выява) -->
+                            <div class="ce-item material-item image-item">
+                                <div class="item-image">
+                                    <img src="./img/ce-placeholder.jpg" alt="Матэрыял">
+                                </div>
+                                <div class="item-info">
+                                    <div class="item-title">🖼️ Табліца "Склоны назоўнікаў"</div>
+                                </div>
+                                <div class="item-actions">
+                                    <button class="item-btn view-image">👁️ Паглядзець</button>
+                                    <button class="item-btn edit-item">✏️</button>
+                                    <button class="item-btn delete-item">🗑️</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Мадальнае акно дадавання тэста -->
+    <div id="addTestModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3>📝 Дадаць тэст</h3>
+            <input type="text" class="modal-input" placeholder="Назва тэста" id="testName">
+            <input type="text" class="modal-input" placeholder="Колькасць пытанняў" id="testQuestions">
+            <input type="text" class="modal-input" placeholder="Час (хвілін)" id="testTime">
+            <div class="modal-buttons">
+                <button class="modal-btn save-modal">Дадаць</button>
+                <button class="modal-btn cancel-modal">Адмяніць</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Мадальнае акно дадавання матэрыяла -->
+    <div id="addMaterialModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3>📚 Дадаць матэрыял</h3>
+            <select id="materialType" class="modal-select">
+                <option value="link">🔗 Спасылка</option>
+                <option value="image">🖼️ Выява</option>
+            </select>
+            <input type="text" class="modal-input" placeholder="Назва матэрыяла" id="materialName">
+            <input type="text" class="modal-input" placeholder="Спасылка (URL)" id="materialUrl" style="display: block;">
+            <input type="file" id="materialImage" accept="image/*" style="display: none;">
+            <div class="image-preview" id="imagePreview" style="display: none;"></div>
+            <div class="modal-buttons">
+                <button class="modal-btn save-modal">Дадаць</button>
+                <button class="modal-btn cancel-modal">Адмяніць</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Мадальнае акно прагляду выявы -->
+    <div id="imageViewModal" class="modal" style="display: none;">
+        <div class="modal-content image-view-content">
+            <img src="" alt="Прагляд" id="viewImage">
+            <button class="close-image-modal">Закрыць</button>
+        </div>
+    </div>
+
+    <script>
+        // Паказваем кнопкі для настаўніка
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        const isTeacher = currentUser.role === 'teacher';
+        
+        if (isTeacher) {
+            document.querySelectorAll('.add-ce-btn, .add-item-btn, .edit-item, .delete-item').forEach(el => {
+                el.style.display = 'flex';
+            });
+        } else {
+            document.querySelectorAll('.add-ce-btn, .add-item-btn, .edit-item, .delete-item').forEach(el => {
+                el.style.display = 'none';
+            });
+        }
+
+        // Мадальныя акны
+        const testModal = document.getElementById('addTestModal');
+        const materialModal = document.getElementById('addMaterialModal');
+        const imageViewModal = document.getElementById('imageViewModal');
+        
+        let currentMaterialType = 'link';
+
+        document.getElementById('addMaterialBtn')?.addEventListener('click', () => {
+            materialModal.style.display = 'flex';
+        });
+
+        document.querySelectorAll('.add-item-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const type = btn.dataset.type;
+                if (type === 'test') {
+                    testModal.style.display = 'flex';
+                } else {
+                    materialModal.style.display = 'flex';
+                }
+            });
+        });
+
+        // Пераключэнне тыпу матэрыяла
+        document.getElementById('materialType')?.addEventListener('change', (e) => {
+            currentMaterialType = e.target.value;
+            const urlField = document.getElementById('materialUrl');
+            const imageField = document.getElementById('materialImage');
+            if (currentMaterialType === 'link') {
+                urlField.style.display = 'block';
+                imageField.style.display = 'none';
+                document.getElementById('imagePreview').style.display = 'none';
+            } else {
+                urlField.style.display = 'none';
+                imageField.style.display = 'block';
+            }
+        });
+
+        // Зачыненне мадальных вокнаў
+        document.querySelectorAll('.cancel-modal, .close-image-modal').forEach(btn => {
+            btn.addEventListener('click', () => {
+                testModal.style.display = 'none';
+                materialModal.style.display = 'none';
+                imageViewModal.style.display = 'none';
+            });
+        });
+
+        // Прагляд выявы
+        document.querySelectorAll('.view-image').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const img = btn.closest('.image-item')?.querySelector('.item-image img');
+                if (img) {
+                    document.getElementById('viewImage').src = img.src;
+                    imageViewModal.style.display = 'flex';
+                }
+            });
+        });
+
+        // Выдаленне элемента
+        document.querySelectorAll('.delete-item').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (confirm('Вы сапраўды хочаце выдаліць гэты элемент?')) {
+                    btn.closest('.ce-item').remove();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

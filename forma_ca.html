@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="be">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дадаць матэрыял да ЦЭ</title>
+    <link rel="stylesheet" href="css/null.css">
+    <link rel="stylesheet" href="css/fonts.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <main>
+        <section class="add-ce-page">
+            <div class="container">
+                <!-- Хедер -->
+                <div class="add-ce-header">
+                    <button class="back_btn" onclick="history.back()">
+                        <img src="./img/Arrow_back.svg" alt="Назад" class="back-arrow">
+                    </button>
+                    <div class="block_title">
+                        <h1 class="add-ce-title">Дадаць матэрыял да ЦЭ</h1>
+                    </div>
+                    <div class="placeholder_btn"></div>
+                </div>
+
+                <!-- Форма -->
+                <div class="add-ce-form">
+                    <!-- Тып матэрыяла -->
+                    <div class="form_field">
+                        <label class="form_label">📋 Тып матэрыяла</label>
+                        <select id="ceMaterialType" class="form_select">
+                            <option value="test">📝 Тэст для падрыхтоўкі</option>
+                            <option value="link">🔗 Спасылка</option>
+                            <option value="image">🖼️ Выява</option>
+                        </select>
+                    </div>
+
+                    <!-- Агульныя палі -->
+                    <div class="form_field">
+                        <label class="form_label">Назва</label>
+                        <input type="text" class="form_input" id="ceMaterialName" placeholder="Увядзіце назву матэрыяла">
+                    </div>
+
+                    <!-- БЛОК: ТЭСТ -->
+                    <div id="testBlock" class="material-block">
+                        <div class="form_field">
+                            <label class="form_label">Час (хвілін)</label>
+                            <input type="number" class="form_input" value="20" id="testTime">
+                        </div>
+
+                        <!-- Секцыя пытанняў -->
+                        <div class="questions_section">
+                            <div class="questions_header">
+                                <label class="form_label">Пытанні</label>
+                                <button type="button" class="add_question_btn" id="addQuestionBtn">
+                                    + Дадаць пытанне
+                                </button>
+                            </div>
+                            <div id="questionsContainer"></div>
+                        </div>
+                    </div>
+
+                    <!-- БЛОК: СПАСЫЛКА -->
+                    <div id="linkBlock" class="material-block" style="display: none;">
+                        <div class="form_field">
+                            <label class="form_label">URL-адрас</label>
+                            <input type="url" class="form_input" id="linkUrl" placeholder="https://example.com">
+                        </div>
+                        <div class="form_field">
+                            <label class="form_label">Апісанне (неабавязкова)</label>
+                            <input type="text" class="form_input" id="linkDescription" placeholder="Кароткае апісанне спасылкі">
+                        </div>
+                    </div>
+
+                    <!-- БЛОК: ВЫЯВА -->
+                    <div id="imageBlock" class="material-block" style="display: none;">
+                        <div class="form_field">
+                            <label class="form_label">Загрузіць выяву</label>
+                            <input type="file" class="form_input" id="imageFile" accept="image/*">
+                        </div>
+                        <div id="imagePreviewContainer" class="image-preview" style="display: none;">
+                            <img id="imagePreview" src="" alt="Перадпрагляд">
+                        </div>
+                    </div>
+
+                    <!-- Кнопка захавання -->
+                    <div class="form_actions">
+                        <button class="save_btn" id="saveCeMaterialBtn">Захаваць матэрыял</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Пераключэнне блокаў
+        const typeSelect = document.getElementById('ceMaterialType');
+        const testBlock = document.getElementById('testBlock');
+        const linkBlock = document.getElementById('linkBlock');
+        const imageBlock = document.getElementById('imageBlock');
+
+        function toggleMaterialBlocks() {
+            const type = typeSelect.value;
+            testBlock.style.display = type === 'test' ? 'block' : 'none';
+            linkBlock.style.display = type === 'link' ? 'block' : 'none';
+            imageBlock.style.display = type === 'image' ? 'block' : 'none';
+        }
+
+        typeSelect.addEventListener('change', toggleMaterialBlocks);
+        toggleMaterialBlocks();
+
+        // Перадпрагляд выявы
+        const imageFile = document.getElementById('imageFile');
+        const imagePreview = document.getElementById('imagePreview');
+        const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+
+        imageFile.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    imagePreview.src = event.target.result;
+                    imagePreviewContainer.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                imagePreviewContainer.style.display = 'none';
+            }
+        });
+
+        // Логіка тэстаў
+        let questionCounter = 0;
+
+        function addQuestion() {
+            questionCounter++;
+            const container = document.getElementById('questionsContainer');
+            const questionId = Date.now() + Math.random();
+
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'question_card';
+            questionDiv.dataset.id = questionId;
+            questionDiv.innerHTML = `
+                <div class="question_header">
+                    <span class="question_title">Пытанне ${questionCounter}</span>
+                    <button class="remove_question_btn" onclick="this.closest('.question_card').remove()">✖</button>
+                </div>
+                <input type="text" class="question_text" placeholder="Тэкст пытання">
+                <div class="question_type">
+                    <label><input type="radio" name="type_${questionId}" value="single" class="type_radio" checked onchange="toggleAnswersContainer(this)"> Адзінарны выбар</label>
+                    <label><input type="radio" name="type_${questionId}" value="multiple" class="type_radio" onchange="toggleAnswersContainer(this)"> Множны выбар</label>
+                    <label><input type="radio" name="type_${questionId}" value="text" class="type_radio" onchange="toggleAnswersContainer(this)"> Увод радка</label>
+                </div>
+                <div class="answers_container"></div>
+                <div class="text_answer_container" style="display: none;">
+                    <input type="text" class="text_correct_answer" placeholder="Увядзіце правільны адказ">
+                    <div class="text-answer-hint">Адказ будзе правярацца без уліку рэгістра</div>
+                </div>
+                <button class="add_answer_btn" onclick="addAnswer(this)">+ Дадаць адказ</button>
+            `;
+            container.appendChild(questionDiv);
+            addAnswer(questionDiv.querySelector('.add_answer_btn'));
+        }
+
+        function addAnswer(button) {
+            const container = button.closest('.question_card').querySelector('.answers_container');
+            const answerRow = document.createElement('div');
+            answerRow.className = 'answer_row';
+            answerRow.innerHTML = `
+                <input type="text" class="answer_input" placeholder="Варыянт адказу">
+                <label><input type="checkbox" class="correct_checkbox"> Правільны</label>
+                <button class="remove_answer_btn" onclick="this.parentElement.remove()">✖</button>
+            `;
+            container.appendChild(answerRow);
+        }
+
+        function toggleAnswersContainer(radio) {
+            const card = radio.closest('.question_card');
+            const answersContainer = card.querySelector('.answers_container');
+            const textAnswerContainer = card.querySelector('.text_answer_container');
+            const addAnswerBtn = card.querySelector('.add_answer_btn');
+            const isTextType = radio.value === 'text';
+
+            if (isTextType) {
+                answersContainer.style.display = 'none';
+                textAnswerContainer.style.display = 'block';
+                addAnswerBtn.style.display = 'none';
+            } else {
+                answersContainer.style.display = 'block';
+                textAnswerContainer.style.display = 'none';
+                addAnswerBtn.style.display = 'inline-block';
+                if (answersContainer.children.length === 0) addAnswer(addAnswerBtn);
+            }
+        }
+
+        document.getElementById('addQuestionBtn')?.addEventListener('click', addQuestion);
+        addQuestion();
+
+        // Захаванне
+        document.getElementById('saveCeMaterialBtn').addEventListener('click', function() {
+            const materialType = typeSelect.value;
+            const materialName = document.getElementById('ceMaterialName').value;
+
+            if (!materialName) {
+                alert('Калі ласка, увядзіце назву матэрыяла');
+                return;
+            }
+
+            let materialData = {
+                type: materialType,
+                name: materialName,
+                date: new Date().toISOString()
+            };
+
+            if (materialType === 'test') {
+                const testTime = document.getElementById('testTime').value;
+                
+                const questions = [];
+                let questionsCount = 0;
+                
+                document.querySelectorAll('.question_card').forEach(card => {
+                    const questionText = card.querySelector('.question_text').value;
+                    const questionType = card.querySelector('input[type="radio"]:checked').value;
+                    
+                    const questionData = {
+                        text: questionText,
+                        type: questionType,
+                        answers: []
+                    };
+
+                    if (questionType === 'text') {
+                        const correctAnswer = card.querySelector('.text_correct_answer').value;
+                        questionData.correctAnswer = correctAnswer;
+                    } else {
+                        card.querySelectorAll('.answer_row').forEach(row => {
+                            const answerText = row.querySelector('.answer_input').value;
+                            const isCorrect = row.querySelector('.correct_checkbox').checked;
+                            if (answerText) {
+                                questionData.answers.push({
+                                    text: answerText,
+                                    correct: isCorrect
+                                });
+                            }
+                        });
+                    }
+
+                    if (questionText) {
+                        questions.push(questionData);
+                        questionsCount++;
+                    }
+                });
+
+                if (questionsCount === 0) {
+                    alert('Калі ласка, дадайце хаця б адно пытанне');
+                    return;
+                }
+
+                materialData.testData = {
+                    time: testTime,
+                    questionsCount: questionsCount,
+                    questions: questions
+                };
+
+                const ceTests = JSON.parse(localStorage.getItem('ceTests') || '[]');
+                ceTests.push(materialData);
+                localStorage.setItem('ceTests', JSON.stringify(ceTests));
+
+                alert(`Тэст "${materialName}" (${questionsCount} пытанняў) паспяхова захаваны!`);
+                
+            } else if (materialType === 'link') {
+                const linkUrl = document.getElementById('linkUrl').value;
+                const linkDescription = document.getElementById('linkDescription').value;
+
+                if (!linkUrl) {
+                    alert('Калі ласка, увядзіце URL-адрас');
+                    return;
+                }
+
+                materialData.url = linkUrl;
+                materialData.description = linkDescription;
+
+                const ceMaterials = JSON.parse(localStorage.getItem('ceMaterials') || '[]');
+                ceMaterials.push(materialData);
+                localStorage.setItem('ceMaterials', JSON.stringify(ceMaterials));
+
+                alert(`Спасылка "${materialName}" паспяхова захавана!`);
+                
+            } else if (materialType === 'image') {
+                const imageFileInput = document.getElementById('imageFile');
+                const file = imageFileInput.files[0];
+
+                if (!file) {
+                    alert('Калі ласка, выберыце выяву');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    materialData.imageData = event.target.result;
+                    materialData.imageName = file.name;
+
+                    const ceMaterials = JSON.parse(localStorage.getItem('ceMaterials') || '[]');
+                    ceMaterials.push(materialData);
+                    localStorage.setItem('ceMaterials', JSON.stringify(ceMaterials));
+
+                    alert(`Выява "${materialName}" паспяхова захавана!`);
+                    window.location.href = 'ce.html';
+                };
+                reader.readAsDataURL(file);
+                return;
+            }
+
+            window.location.href = 'ce.html';
+        });
+    </script>
+</body>
+</html>

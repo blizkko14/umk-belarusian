@@ -20,7 +20,7 @@
                     <div class="block_title">
                         <h1 class="ce-title">Цэнтралізаваны экзамен</h1>
                     </div>
-                    <button class="add-ce-btn" id="addMaterialBtn" style="display: none;">
+                    <button class="add-ce-btn" id="addMaterialBtn" style="display: flex;">
                         <img src="./img/plus.svg" alt="Дадаць" class="plus-icon">
                     </button>
                 </div>
@@ -137,85 +137,177 @@
     </div>
 
     <script>
-        // Паказваем кнопкі для настаўніка
-        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-        const isTeacher = currentUser.role === 'teacher';
-        
-        if (isTeacher) {
-            document.querySelectorAll('.add-ce-btn, .add-item-btn, .edit-item, .delete-item').forEach(el => {
-                el.style.display = 'flex';
-            });
-        } else {
-            document.querySelectorAll('.add-ce-btn, .add-item-btn, .edit-item, .delete-item').forEach(el => {
-                el.style.display = 'none';
-            });
-        }
-
-        // Мадальныя акны
-        const testModal = document.getElementById('addTestModal');
-        const materialModal = document.getElementById('addMaterialModal');
-        const imageViewModal = document.getElementById('imageViewModal');
-        
-        let currentMaterialType = 'link';
-
-        document.getElementById('addMaterialBtn')?.addEventListener('click', () => {
-            materialModal.style.display = 'flex';
+    // Паказваем кнопкі для настаўніка, але кнопка "Дадаць" заўсёды бачная
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const isTeacher = currentUser.role === 'teacher';
+    
+    // Кнопка "Дадаць" у хедэры заўсёды бачная
+    document.getElementById('addMaterialBtn').style.display = 'flex';
+    
+    if (isTeacher) {
+        // Для настаўніка паказваем усе кнопкі рэдагавання і выдалення
+        document.querySelectorAll('.add-item-btn, .edit-item, .delete-item').forEach(el => {
+            el.style.display = 'flex';
         });
-
-        document.querySelectorAll('.add-item-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const type = btn.dataset.type;
-                if (type === 'test') {
-                    testModal.style.display = 'flex';
-                } else {
-                    materialModal.style.display = 'flex';
-                }
-            });
+    } else {
+        // Для вучня хаваем толькі кнопкі рэдагавання і выдалення
+        document.querySelectorAll('.add-item-btn, .edit-item, .delete-item').forEach(el => {
+            el.style.display = 'none';
         });
+    }
 
-        // Пераключэнне тыпу матэрыяла
-        document.getElementById('materialType')?.addEventListener('change', (e) => {
-            currentMaterialType = e.target.value;
-            const urlField = document.getElementById('materialUrl');
-            const imageField = document.getElementById('materialImage');
-            if (currentMaterialType === 'link') {
-                urlField.style.display = 'block';
-                imageField.style.display = 'none';
-                document.getElementById('imagePreview').style.display = 'none';
+    // Мадальныя акны
+    const testModal = document.getElementById('addTestModal');
+    const materialModal = document.getElementById('addMaterialModal');
+    const imageViewModal = document.getElementById('imageViewModal');
+    
+    let currentMaterialType = 'link';
+
+    document.getElementById('addMaterialBtn')?.addEventListener('click', () => {
+        // Перанакіраванне на старонку дадавання матэрыяла
+        window.location.href = 'add-ce-material.html';
+    });
+
+    document.querySelectorAll('.add-item-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const type = btn.dataset.type;
+            if (type === 'test') {
+                window.location.href = 'add-ce-material.html?type=test';
             } else {
-                urlField.style.display = 'none';
-                imageField.style.display = 'block';
+                window.location.href = 'add-ce-material.html?type=material';
             }
         });
+    });
 
-        // Зачыненне мадальных вокнаў
-        document.querySelectorAll('.cancel-modal, .close-image-modal').forEach(btn => {
-            btn.addEventListener('click', () => {
-                testModal.style.display = 'none';
-                materialModal.style.display = 'none';
-                imageViewModal.style.display = 'none';
-            });
-        });
+    // Пераключэнне тыпу матэрыяла
+    document.getElementById('materialType')?.addEventListener('change', (e) => {
+        currentMaterialType = e.target.value;
+        const urlField = document.getElementById('materialUrl');
+        const imageField = document.getElementById('materialImage');
+        if (currentMaterialType === 'link') {
+            urlField.style.display = 'block';
+            imageField.style.display = 'none';
+            document.getElementById('imagePreview').style.display = 'none';
+        } else {
+            urlField.style.display = 'none';
+            imageField.style.display = 'block';
+        }
+    });
 
-        // Прагляд выявы
-        document.querySelectorAll('.view-image').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const img = btn.closest('.image-item')?.querySelector('.item-image img');
-                if (img) {
-                    document.getElementById('viewImage').src = img.src;
-                    imageViewModal.style.display = 'flex';
-                }
-            });
+    // Зачыненне мадальных вокнаў
+    document.querySelectorAll('.cancel-modal, .close-image-modal').forEach(btn => {
+        btn.addEventListener('click', () => {
+            testModal.style.display = 'none';
+            materialModal.style.display = 'none';
+            imageViewModal.style.display = 'none';
         });
+    });
 
-        // Выдаленне элемента
-        document.querySelectorAll('.delete-item').forEach(btn => {
-            btn.addEventListener('click', () => {
-                if (confirm('Вы сапраўды хочаце выдаліць гэты элемент?')) {
-                    btn.closest('.ce-item').remove();
-                }
-            });
+    // Прагляд выявы
+    document.querySelectorAll('.view-image').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const img = btn.closest('.image-item')?.querySelector('.item-image img');
+            if (img) {
+                document.getElementById('viewImage').src = img.src;
+                imageViewModal.style.display = 'flex';
+            }
         });
-    </script>
+    });
+
+    // Выдаленне элемента
+    document.querySelectorAll('.delete-item').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (confirm('Вы сапраўды хочаце выдаліць гэты элемент?')) {
+                btn.closest('.ce-item').remove();
+            }
+        });
+    });
+
+    // Загрузка захаваных матэрыялаў з localStorage
+    function loadSavedMaterials() {
+        const ceTests = JSON.parse(localStorage.getItem('ceTests') || '[]');
+        const ceMaterials = JSON.parse(localStorage.getItem('ceMaterials') || '[]');
+        
+        const testsContainer = document.getElementById('testsContainer');
+        const materialsContainer = document.getElementById('materialsContainer');
+        
+        // Ачышчаем кантэйнеры (акрамя прыкладаў, калі яны патрэбны)
+        // testsContainer.innerHTML = '';
+        // materialsContainer.innerHTML = '';
+        
+        // Дадаем захаваныя тэсты
+        ceTests.forEach(test => {
+            const testElement = createTestElement(test);
+            testsContainer.appendChild(testElement);
+        });
+        
+        // Дадаем захаваныя матэрыялы
+        ceMaterials.forEach(material => {
+            const materialElement = createMaterialElement(material);
+            materialsContainer.appendChild(materialElement);
+        });
+    }
+    
+    function createTestElement(test) {
+        const div = document.createElement('div');
+        div.className = 'ce-item test-item';
+        div.innerHTML = `
+            <div class="item-info">
+                <div class="item-title">${test.name}</div>
+                <div class="item-meta">${test.testData.questionsCount} пытанняў | ${test.testData.time} хвілін</div>
+            </div>
+            <div class="item-actions">
+                <button class="item-btn start-test">▶ Пачаць</button>
+                ${isTeacher ? `
+                    <button class="item-btn edit-item">✏️</button>
+                    <button class="item-btn delete-item">🗑️</button>
+                ` : ''}
+            </div>
+        `;
+        return div;
+    }
+    
+    function createMaterialElement(material) {
+        const div = document.createElement('div');
+        div.className = `ce-item material-item ${material.type}-item`;
+        
+        if (material.type === 'link') {
+            div.innerHTML = `
+                <div class="item-info">
+                    <div class="item-title">🔗 ${material.name}</div>
+                    <div class="item-meta">${material.description || material.url}</div>
+                </div>
+                <div class="item-actions">
+                    <a href="${material.url}" class="item-btn open-link" target="_blank">🔗 Адкрыць</a>
+                    ${isTeacher ? `
+                        <button class="item-btn edit-item">✏️</button>
+                        <button class="item-btn delete-item">🗑️</button>
+                    ` : ''}
+                </div>
+            `;
+        } else if (material.type === 'image') {
+            div.innerHTML = `
+                <div class="item-image">
+                    <img src="${material.imageData}" alt="${material.name}">
+                </div>
+                <div class="item-info">
+                    <div class="item-title">🖼️ ${material.name}</div>
+                </div>
+                <div class="item-actions">
+                    <button class="item-btn view-image">👁️ Паглядзець</button>
+                    ${isTeacher ? `
+                        <button class="item-btn edit-item">✏️</button>
+                        <button class="item-btn delete-item">🗑️</button>
+                    ` : ''}
+                </div>
+            `;
+        }
+        
+        return div;
+    }
+    
+    // Загружаем матэрыялы пры загрузцы старонкі
+    loadSavedMaterials();
+</script>
 </body>
 </html>

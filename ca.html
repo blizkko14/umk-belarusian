@@ -1,292 +1,276 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="be">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ЦЭ</title>
-    <link rel="stylesheet" href="css/null.css">
-    <link rel="stylesheet" href="css/fonts.css">
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
+    <link rel="stylesheet" href="css/null.css" />
+    <link rel="stylesheet" href="css/fonts.css" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
     <main>
-        <section class="ce-page">
-            <div class="container">
-                <!-- Хедер -->
-                <div class="ce-header">
-                    <button class="back_btn" onclick="history.back()">
-                        <img src="./img/Arrow_back.svg" alt="Назад" class="back-arrow">
-                    </button>
-                    <div class="block_title">
-                        <h1 class="ce-title">Цэнтралізаваны экзамен</h1>
-                    </div>
-                    <button class="add-ce-btn" id="addMaterialBtn" style="display: flex;">
-                        <img src="./img/plus.svg" alt="Дадаць" class="plus-icon">
-                    </button>
-                </div>
-
-                <!-- Апісанне -->
-                <div class="ce-description">
-                    <p>Дапаможныя матэрыялы для падрыхтоўкі да Цэнтралізаванага экзамену па беларускай мове</p>
-                </div>
-
-                <!-- Спіс матэрыялаў і тэстаў -->
-                <div class="ce-list" id="ceList">
-                    <!-- Тэсты -->
-                    <div class="ce-section">
-                        <div class="section-title">
-                            <span>📝 Тэсты для падрыхтоўкі</span>
-                            <button class="add-item-btn" data-type="test">+ Дадаць тэст</button>
-                        </div>
-                        <div class="tests-container" id="testsContainer">
-                            <!-- Тэст 1 -->
-                            <div class="ce-item test-item">
-                                <div class="item-info">
-                                    <div class="item-title">Практыкаванні па арфаграфіі</div>
-                                    <div class="item-meta">10 пытанняў | 20 хвілін</div>
-                                </div>
-                                <div class="item-actions">
-                                    <button class="item-btn start-test">▶ Пачаць</button>
-                                    <button class="item-btn edit-item">✏️</button>
-                                    <button class="item-btn delete-item">🗑️</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Матэрыялы -->
-                    <div class="ce-section">
-                        <div class="section-title">
-                            <span>📚 Дадатковыя матэрыялы</span>
-                            <button class="add-item-btn" data-type="material">+ Дадаць матэрыял</button>
-                        </div>
-                        <div class="materials-container" id="materialsContainer">
-                            <!-- Матэрыял 1 (спасылка) -->
-                            <div class="ce-item material-item link-item">
-                                <div class="item-info">
-                                    <div class="item-title">🔗 Правілы беларускай арфаграфіі</div>
-                                    <div class="item-meta">aduct.by/pravapis</div>
-                                </div>
-                                <div class="item-actions">
-                                    <a href="#" class="item-btn open-link" target="_blank">🔗 Адкрыць</a>
-                                    <button class="item-btn edit-item">✏️</button>
-                                    <button class="item-btn delete-item">🗑️</button>
-                                </div>
-                            </div>
-
-                            <!-- Матэрыял 2 (фота/выява) -->
-                            <div class="ce-item material-item image-item">
-                                <div class="item-image">
-                                    <img src="./img/ce-placeholder.jpg" alt="Матэрыял">
-                                </div>
-                                <div class="item-info">
-                                    <div class="item-title">🖼️ Табліца "Склоны назоўнікаў"</div>
-                                </div>
-                                <div class="item-actions">
-                                    <button class="item-btn view-image">👁️ Паглядзець</button>
-                                    <button class="item-btn edit-item">✏️</button>
-                                    <button class="item-btn delete-item">🗑️</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+      <section class="ce-page">
+        <div class="container">
+          <!-- Хедер -->
+          <div class="ce-header">
+            <button
+              class="back_btn"
+              onclick="window.location.href = 'section.html'"
+            >
+              <img src="./img/Arrow_back.svg" alt="Назад" class="back-arrow" />
+            </button>
+            <div class="block_title">
+              <h1 class="ce-title">Цэнтралізаваны экзамен</h1>
             </div>
-        </section>
+            <button
+              class="add-ce-btn"
+              id="addMaterialBtn"
+              style="display: flex"
+            >
+              <img src="./img/plus.svg" alt="Дадаць" class="plus-icon" />
+            </button>
+          </div>
+
+          <!-- Апісанне -->
+          <div class="ce-description">
+            <p>
+              Дапаможныя матэрыялы для падрыхтоўкі да Цэнтралізаванага экзамену
+              па беларускай мове
+            </p>
+          </div>
+
+          <!-- Спіс матэрыялаў і тэстаў -->
+          <div class="ce-list" id="ceList">
+            <!-- Тэсты -->
+            <div class="ce-section">
+              <div class="section-title">
+                <span>📝 Тэсты для падрыхтоўкі</span>
+                <button class="add-item-btn" data-type="test">
+                  + Дадаць тэст
+                </button>
+              </div>
+              <div class="tests-container" id="testsContainer">
+                <!-- Тэсты будуць загружаны з localStorage -->
+              </div>
+            </div>
+
+            <!-- Матэрыялы -->
+            <div class="ce-section">
+              <div class="section-title">
+                <span>📚 Дадатковыя матэрыялы</span>
+                <button class="add-item-btn" data-type="material">
+                  + Дадаць матэрыял
+                </button>
+              </div>
+              <div class="materials-container" id="materialsContainer">
+                <!-- Матэрыялы будуць загружаны з localStorage -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
 
-    <!-- Мадальнае акно дадавання тэста -->
-    <div id="addTestModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <h3>📝 Дадаць тэст</h3>
-            <input type="text" class="modal-input" placeholder="Назва тэста" id="testName">
-            <input type="text" class="modal-input" placeholder="Колькасць пытанняў" id="testQuestions">
-            <input type="text" class="modal-input" placeholder="Час (хвілін)" id="testTime">
-            <div class="modal-buttons">
-                <button class="modal-btn save-modal">Дадаць</button>
-                <button class="modal-btn cancel-modal">Адмяніць</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Мадальнае акно дадавання матэрыяла -->
-    <div id="addMaterialModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <h3>📚 Дадаць матэрыял</h3>
-            <select id="materialType" class="modal-select">
-                <option value="link">🔗 Спасылка</option>
-                <option value="image">🖼️ Выява</option>
-            </select>
-            <input type="text" class="modal-input" placeholder="Назва матэрыяла" id="materialName">
-            <input type="text" class="modal-input" placeholder="Спасылка (URL)" id="materialUrl" style="display: block;">
-            <input type="file" id="materialImage" accept="image/*" style="display: none;">
-            <div class="image-preview" id="imagePreview" style="display: none;"></div>
-            <div class="modal-buttons">
-                <button class="modal-btn save-modal">Дадаць</button>
-                <button class="modal-btn cancel-modal">Адмяніць</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Мадальнае акно прагляду выявы -->
-    <div id="imageViewModal" class="modal" style="display: none;">
-        <div class="modal-content image-view-content">
-            <img src="" alt="Прагляд" id="viewImage">
-            <button class="close-image-modal">Закрыць</button>
-        </div>
+    <div id="imageViewModal" class="modal" style="display: none">
+      <div class="modal-content image-view-content">
+        <img src="" alt="Прагляд" id="viewImage" />
+        <button class="close-image-modal">Закрыць</button>
+      </div>
     </div>
 
+    <script src="js/router.js"></script>
     <script>
-    // Паказваем кнопкі для настаўніка, але кнопка "Дадаць" заўсёды бачная
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    const isTeacher = currentUser.role === 'teacher';
-    
-    // Кнопка "Дадаць" у хедэры заўсёды бачная
-    document.getElementById('addMaterialBtn').style.display = 'flex';
-    
-    if (isTeacher) {
+      // Паказваем кнопкі для настаўніка, але кнопка "Дадаць" заўсёды бачная
+      const currentUser = JSON.parse(
+        localStorage.getItem("currentUser") || "{}",
+      );
+      const isTeacher = currentUser.role === "teacher";
+
+      // Кнопка "Дадаць" у хедэры заўсёды бачная
+      document.getElementById("addMaterialBtn").style.display = "flex";
+
+      if (isTeacher) {
         // Для настаўніка паказваем усе кнопкі рэдагавання і выдалення
-        document.querySelectorAll('.add-item-btn, .edit-item, .delete-item').forEach(el => {
-            el.style.display = 'flex';
-        });
-    } else {
+        document
+          .querySelectorAll(".add-item-btn, .edit-item, .delete-item")
+          .forEach((el) => {
+            if (el) el.style.display = "flex";
+          });
+      } else {
         // Для вучня хаваем толькі кнопкі рэдагавання і выдалення
-        document.querySelectorAll('.add-item-btn, .edit-item, .delete-item').forEach(el => {
-            el.style.display = 'none';
+        document
+          .querySelectorAll(".add-item-btn, .edit-item, .delete-item")
+          .forEach((el) => {
+            if (el) el.style.display = "none";
+          });
+      }
+
+      // Пераход на forma_ca.html
+      document
+        .getElementById("addMaterialBtn")
+        ?.addEventListener("click", () => {
+          window.location.href = "forma_ca.html";
         });
-    }
 
-    // Мадальныя акны
-    const testModal = document.getElementById('addTestModal');
-    const materialModal = document.getElementById('addMaterialModal');
-    const imageViewModal = document.getElementById('imageViewModal');
-    
-    let currentMaterialType = 'link';
-
-    document.getElementById('addMaterialBtn')?.addEventListener('click', () => {
-        // Перанакіраванне на старонку дадавання матэрыяла
-        window.location.href = 'add-ce-material.html';
-    });
-
-    document.querySelectorAll('.add-item-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const type = btn.dataset.type;
-            if (type === 'test') {
-                window.location.href = 'add-ce-material.html?type=test';
-            } else {
-                window.location.href = 'add-ce-material.html?type=material';
-            }
+      document.querySelectorAll(".add-item-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const type = btn.dataset.type;
+          if (type === "test") {
+            window.location.href = "forma_ca.html?type=test";
+          } else {
+            window.location.href = "forma_ca.html?type=material";
+          }
         });
-    });
+      });
 
-    // Пераключэнне тыпу матэрыяла
-    document.getElementById('materialType')?.addEventListener('change', (e) => {
-        currentMaterialType = e.target.value;
-        const urlField = document.getElementById('materialUrl');
-        const imageField = document.getElementById('materialImage');
-        if (currentMaterialType === 'link') {
-            urlField.style.display = 'block';
-            imageField.style.display = 'none';
-            document.getElementById('imagePreview').style.display = 'none';
-        } else {
-            urlField.style.display = 'none';
-            imageField.style.display = 'block';
-        }
-    });
+      // Загрузка захаваных матэрыялаў з localStorage
+      function loadSavedMaterials() {
+        const ceTests = JSON.parse(localStorage.getItem("ceTests") || "[]");
+        const ceMaterials = JSON.parse(
+          localStorage.getItem("ceMaterials") || "[]",
+        );
 
-    // Зачыненне мадальных вокнаў
-    document.querySelectorAll('.cancel-modal, .close-image-modal').forEach(btn => {
-        btn.addEventListener('click', () => {
-            testModal.style.display = 'none';
-            materialModal.style.display = 'none';
-            imageViewModal.style.display = 'none';
-        });
-    });
+        const testsContainer = document.getElementById("testsContainer");
+        const materialsContainer =
+          document.getElementById("materialsContainer");
 
-    // Прагляд выявы
-    document.querySelectorAll('.view-image').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const img = btn.closest('.image-item')?.querySelector('.item-image img');
-            if (img) {
-                document.getElementById('viewImage').src = img.src;
-                imageViewModal.style.display = 'flex';
-            }
-        });
-    });
+        // Ачышчаем кантэйнеры перад загрузкай
+        testsContainer.innerHTML = "";
+        materialsContainer.innerHTML = "";
 
-    // Выдаленне элемента
-    document.querySelectorAll('.delete-item').forEach(btn => {
-        btn.addEventListener('click', () => {
-            if (confirm('Вы сапраўды хочаце выдаліць гэты элемент?')) {
-                btn.closest('.ce-item').remove();
-            }
-        });
-    });
-
-    // Загрузка захаваных матэрыялаў з localStorage
-    function loadSavedMaterials() {
-        const ceTests = JSON.parse(localStorage.getItem('ceTests') || '[]');
-        const ceMaterials = JSON.parse(localStorage.getItem('ceMaterials') || '[]');
-        
-        const testsContainer = document.getElementById('testsContainer');
-        const materialsContainer = document.getElementById('materialsContainer');
-        
-        // Ачышчаем кантэйнеры (акрамя прыкладаў, калі яны патрэбны)
-        // testsContainer.innerHTML = '';
-        // materialsContainer.innerHTML = '';
-        
         // Дадаем захаваныя тэсты
-        ceTests.forEach(test => {
-            const testElement = createTestElement(test);
-            testsContainer.appendChild(testElement);
+        ceTests.forEach((test, index) => {
+          const testElement = createTestElement(test, index);
+          testsContainer.appendChild(testElement);
         });
-        
+
         // Дадаем захаваныя матэрыялы
-        ceMaterials.forEach(material => {
-            const materialElement = createMaterialElement(material);
-            materialsContainer.appendChild(materialElement);
+        ceMaterials.forEach((material, index) => {
+          const materialElement = createMaterialElement(material, index);
+          materialsContainer.appendChild(materialElement);
         });
-    }
-    
-    function createTestElement(test) {
-        const div = document.createElement('div');
-        div.className = 'ce-item test-item';
+
+        // Калі няма матэрыялаў, паказваем прыклады
+        if (ceTests.length === 0) {
+          testsContainer.innerHTML = `
+                <div class="ce-item test-item">
+                    <div class="item-info">
+                        <div class="item-title">Практыкаванні па арфаграфіі</div>
+                        <div class="item-meta">10 пытанняў | 20 хвілін</div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="item-btn start-test">▶ Пачаць</button>
+                        ${
+                          isTeacher
+                            ? `
+                            <button class="item-btn edit-item">✏️</button>
+                            <button class="item-btn delete-item">🗑️</button>
+                        `
+                            : ""
+                        }
+                    </div>
+                </div>
+            `;
+        }
+
+        if (ceMaterials.length === 0) {
+          materialsContainer.innerHTML = `
+                <div class="ce-item material-item link-item">
+                    <div class="item-info">
+                        <div class="item-title">🔗 Правілы беларускай арфаграфіі</div>
+                        <div class="item-meta">aduct.by/pravapis</div>
+                    </div>
+                    <div class="item-actions">
+                        <a href="#" class="item-btn open-link" target="_blank">🔗 Адкрыць</a>
+                        ${
+                          isTeacher
+                            ? `
+                            <button class="item-btn edit-item">✏️</button>
+                            <button class="item-btn delete-item">🗑️</button>
+                        `
+                            : ""
+                        }
+                    </div>
+                </div>
+                <div class="ce-item material-item image-item">
+                    <div class="item-image">
+                        <img src="./img/ce-placeholder.jpg" alt="Матэрыял">
+                    </div>
+                    <div class="item-info">
+                        <div class="item-title">🖼️ Табліца "Склоны назоўнікаў"</div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="item-btn view-image">👁️ Паглядзець</button>
+                        ${
+                          isTeacher
+                            ? `
+                            <button class="item-btn edit-item">✏️</button>
+                            <button class="item-btn delete-item">🗑️</button>
+                        `
+                            : ""
+                        }
+                    </div>
+                </div>
+            `;
+        }
+
+        // Дадаем апрацоўшчыкі падзей
+        attachEventHandlers();
+      }
+
+      function createTestElement(test, index) {
+        const div = document.createElement("div");
+        div.className = "ce-item test-item";
+        div.dataset.index = index;
+        div.dataset.type = "test";
         div.innerHTML = `
             <div class="item-info">
                 <div class="item-title">${test.name}</div>
-                <div class="item-meta">${test.testData.questionsCount} пытанняў | ${test.testData.time} хвілін</div>
+                <div class="item-meta">${test.testData?.questionsCount || 0} пытанняў | ${test.testData?.time || 20} хвілін</div>
             </div>
             <div class="item-actions">
                 <button class="item-btn start-test">▶ Пачаць</button>
-                ${isTeacher ? `
+                ${
+                  isTeacher
+                    ? `
                     <button class="item-btn edit-item">✏️</button>
                     <button class="item-btn delete-item">🗑️</button>
-                ` : ''}
+                `
+                    : ""
+                }
             </div>
         `;
         return div;
-    }
-    
-    function createMaterialElement(material) {
-        const div = document.createElement('div');
+      }
+
+      function createMaterialElement(material, index) {
+        const div = document.createElement("div");
         div.className = `ce-item material-item ${material.type}-item`;
-        
-        if (material.type === 'link') {
-            div.innerHTML = `
+        div.dataset.index = index;
+        div.dataset.type = "material";
+
+        if (material.type === "link") {
+          div.innerHTML = `
                 <div class="item-info">
                     <div class="item-title">🔗 ${material.name}</div>
                     <div class="item-meta">${material.description || material.url}</div>
                 </div>
                 <div class="item-actions">
                     <a href="${material.url}" class="item-btn open-link" target="_blank">🔗 Адкрыць</a>
-                    ${isTeacher ? `
+                    ${
+                      isTeacher
+                        ? `
                         <button class="item-btn edit-item">✏️</button>
                         <button class="item-btn delete-item">🗑️</button>
-                    ` : ''}
+                    `
+                        : ""
+                    }
                 </div>
             `;
-        } else if (material.type === 'image') {
-            div.innerHTML = `
+        } else if (material.type === "image") {
+          div.innerHTML = `
                 <div class="item-image">
                     <img src="${material.imageData}" alt="${material.name}">
                 </div>
@@ -295,19 +279,99 @@
                 </div>
                 <div class="item-actions">
                     <button class="item-btn view-image">👁️ Паглядзець</button>
-                    ${isTeacher ? `
+                    ${
+                      isTeacher
+                        ? `
                         <button class="item-btn edit-item">✏️</button>
                         <button class="item-btn delete-item">🗑️</button>
-                    ` : ''}
+                    `
+                        : ""
+                    }
                 </div>
             `;
         }
-        
+
         return div;
-    }
-    
-    // Загружаем матэрыялы пры загрузцы старонкі
-    loadSavedMaterials();
-</script>
-</body>
+      }
+
+      function attachEventHandlers() {
+        // Прагляд выявы
+        const imageViewModal = document.getElementById("imageViewModal");
+        const viewImage = document.getElementById("viewImage");
+
+        document.querySelectorAll(".view-image").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const img = btn
+              .closest(".image-item")
+              ?.querySelector(".item-image img");
+            if (img) {
+              viewImage.src = img.src;
+              imageViewModal.style.display = "flex";
+            }
+          });
+        });
+
+        // Зачыненне мадальнага акна прагляду выявы
+        document
+          .querySelector(".close-image-modal")
+          ?.addEventListener("click", () => {
+            imageViewModal.style.display = "none";
+          });
+
+        // Зачыненне па кліку па-за мадальным акном
+        imageViewModal.addEventListener("click", (e) => {
+          if (e.target === imageViewModal) {
+            imageViewModal.style.display = "none";
+          }
+        });
+
+        // Выдаленне элемента
+        document.querySelectorAll(".delete-item").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            const item = this.closest(".ce-item");
+            const type = item.dataset.type;
+            const index = item.dataset.index;
+
+            if (confirm("Вы сапраўды хочаце выдаліць гэты элемент?")) {
+              if (type === "test") {
+                const ceTests = JSON.parse(
+                  localStorage.getItem("ceTests") || "[]",
+                );
+                ceTests.splice(index, 1);
+                localStorage.setItem("ceTests", JSON.stringify(ceTests));
+              } else if (type === "material") {
+                const ceMaterials = JSON.parse(
+                  localStorage.getItem("ceMaterials") || "[]",
+                );
+                ceMaterials.splice(index, 1);
+                localStorage.setItem(
+                  "ceMaterials",
+                  JSON.stringify(ceMaterials),
+                );
+              }
+              loadSavedMaterials();
+            }
+          });
+        });
+
+        // Рэдагаванне элемента (пераход на forma_ca з параметрамі)
+        document.querySelectorAll(".edit-item").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            const item = this.closest(".ce-item");
+            const type = item.dataset.type;
+            const index = item.dataset.index;
+
+            if (type === "test") {
+              window.location.href = `forma_ca.html?type=test&edit=${index}`;
+            } else {
+              window.location.href = `forma_ca.html?type=material&edit=${index}`;
+            }
+          });
+        });
+      }
+
+      // Загружаем матэрыялы пры загрузцы старонкі
+      loadSavedMaterials();
+    </script>
+  </body>
 </html>

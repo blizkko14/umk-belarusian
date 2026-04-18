@@ -14,67 +14,55 @@
         <div class="container">
           <!-- Шапка с заголовком и кнопкой назад -->
           <div class="topics_header">
-            <button class="back_btn" onclick="history.back()">
+            <button class="back_btn" id="backBtn">
               <img src="./img/Arrow_back.svg" alt="Назад" class="back-arrow" />
             </button>
             <div class="block_title">
-              <h1 class="topics_title">5 клас</h1>
+              <h1 class="topics_title" id="classTitle">5 клас</h1>
             </div>
             <button
               class="add-topic-btn"
-              id="addTopicBtn"
+              id="addTestBtn"
               style="display: flex"
             >
               <img src="./img/plus.svg" alt="Дадаць" class="plus-icon" />
             </button>
           </div>
 
-          <!-- Список тем -->
-          <div class="topics_list" id="topicsList">
-            <div class="topic_block_wrapper2">
-              <div class="topic_block2">
-                Правапiс
-                <button class="start_test2">
-                  Пачаць тэст
-                  <img src="./img/Arrow_teast.svg" alt="" class="arrow_test2" />
-                </button>
-              </div>
-              <div class="topic_actions">
-                <button class="topic_icon edit" title="Рэдагаваць">✏️</button>
-                <button class="topic_icon delete" title="Выдаліць">🗑️</button>
-              </div>
-            </div>
-
-            <div class="topic_block_wrapper2">
-              <div class="topic_block2">
-                Правапiс
-                <button class="start_test2">
-                  Пачаць тэст
-                  <img src="./img/Arrow_teast.svg" alt="" class="arrow_test2" />
-                </button>
-              </div>
-              <div class="topic_actions">
-                <button class="topic_icon edit" title="Рэдагаваць">✏️</button>
-                <button class="topic_icon delete" title="Выдаліць">🗑️</button>
-              </div>
-            </div>
+          <!-- Список тестов -->
+          <div class="topics_list" id="testsList">
+            <!-- Тесты будут загружены через JavaScript -->
           </div>
         </div>
       </section>
     </main>
+
+    <!-- Модальное окно добавления/редактирования теста -->
+    <div id="testModal" class="modal" style="display: none">
+      <div class="modal-content">
+        <h3 id="modalTitle">📝 Дадаць новы тэст</h3>
+        <input type="hidden" id="testId" value="">
+        <input type="text" class="modal-input" id="testName" placeholder="Назва тэста">
+        <input type="number" class="modal-input" id="testTime" placeholder="Час (хвілін)" value="20" min="1">
+        <div class="modal-buttons">
+          <button class="modal-btn save-modal" id="saveTestBtn">Захаваць</button>
+          <button class="modal-btn cancel-modal" id="cancelTestBtn">Адмяніць</button>
+        </div>
+      </div>
+    </div>
 
     <!-- Модальное окно подтверждения удаления -->
     <div id="deleteModal" class="modal" style="display: none">
       <div class="modal-content">
         <h3>⚠️ Пацверджанне выдалення</h3>
         <p>
-          Вы сапраўды хочаце выдаліць тэму
-          <strong id="deleteTopicName"></strong>?
+          Вы сапраўды хочаце выдаліць тэст
+          <strong id="deleteTestName"></strong>?
         </p>
         <p class="warning-text">
-          Увага! Пры выдаленні тэмы будуць выдалены таксама:<br />
-          • Усе канспекты гэтай тэмы<br />
-          • Усе тэсты гэтай тэмы
+          Увага! Пры выдаленні тэста будуць выдалены таксама:<br />
+          • Усе пытанні гэтага тэста<br />
+          • Усе вынікі праходжання гэтага тэста
         </p>
         <div class="modal-buttons">
           <button class="modal-btn confirm" id="confirmDeleteBtn">
@@ -87,7 +75,218 @@
       </div>
     </div>
 
-    <script src="js/users-data.js"></script>
-    <script src="js/topics.js"></script>
+    <script src="js/router.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        // Атрымліваем нумар класа з URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const classNumber = urlParams.get('class') || '5';
+        
+        // Абнаўляем загаловак
+        document.getElementById('classTitle').textContent = `${classNumber} клас`;
+        
+        // Кнопка назад - вяртаемся на classes.html з параметрам тыпу
+        document.getElementById('backBtn').addEventListener('click', () => {
+          window.location.href = `classes.html?type=tests`;
+        });
+        
+        // Праверка ролі карыстальніка
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        const isTeacher = currentUser.role === 'teacher';
+        
+        if (!isTeacher) {
+          document.getElementById('addTestBtn').style.display = 'none';
+        }
+        
+        // Элементы мадальнага акна
+        const testModal = document.getElementById('testModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const testId = document.getElementById('testId');
+        const testName = document.getElementById('testName');
+        const testTime = document.getElementById('testTime');
+        const saveTestBtn = document.getElementById('saveTestBtn');
+        const cancelTestBtn = document.getElementById('cancelTestBtn');
+        
+        // Адкрыццё мадальнага акна для дадавання новага тэста
+        document.getElementById('addTestBtn').addEventListener('click', () => {
+          modalTitle.textContent = '📝 Дадаць новы тэст';
+          testId.value = '';
+          testName.value = '';
+          testTime.value = '20';
+          testModal.style.display = 'flex';
+        });
+        
+        // Зачыненне мадальнага акна
+        cancelTestBtn.addEventListener('click', () => {
+          testModal.style.display = 'none';
+        });
+        
+        // Захаванне тэста
+        saveTestBtn.addEventListener('click', () => {
+          const name = testName.value.trim();
+          const time = parseInt(testTime.value) || 20;
+          
+          if (!name) {
+            alert('Калі ласка, увядзіце назву тэста');
+            return;
+          }
+          
+          // Атрымліваем існуючыя тэсты з localStorage
+          const storageKey = `tests_${classNumber}`;
+          const tests = JSON.parse(localStorage.getItem(storageKey) || '[]');
+          
+          const id = testId.value;
+          
+          if (id) {
+            // Рэдагаванне існуючага тэста
+            const index = tests.findIndex(t => t.id == id);
+            if (index !== -1) {
+              tests[index].name = name;
+              tests[index].time = time;
+              tests[index].updatedAt = new Date().toISOString();
+            }
+            alert('Тэст паспяхова абноўлены!');
+          } else {
+            // Стварэнне новага тэста
+            const newTest = {
+              id: Date.now(),
+              name: name,
+              time: time,
+              class: classNumber,
+              questionsCount: 0,
+              questions: [],
+              createdAt: new Date().toISOString()
+            };
+            tests.push(newTest);
+            alert('Тэст паспяхова створаны!');
+          }
+          
+          // Захоўваем у localStorage
+          localStorage.setItem(storageKey, JSON.stringify(tests));
+          
+          // Зачыняем мадальнае акно
+          testModal.style.display = 'none';
+          
+          // Абнаўляем спіс тэстаў
+          loadTests();
+        });
+        
+        // Загрузка тэстаў
+        function loadTests() {
+          const storageKey = `tests_${classNumber}`;
+          const tests = JSON.parse(localStorage.getItem(storageKey) || '[]');
+          const testsList = document.getElementById('testsList');
+          
+          if (tests.length === 0) {
+            testsList.innerHTML = '<p class="empty-message">Няма тэстаў. Дадайце новы тэст.</p>';
+            return;
+          }
+          
+          testsList.innerHTML = '';
+          
+          tests.forEach(test => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'topic_block_wrapper2';
+            wrapper.innerHTML = `
+              <div class="topic_block2">
+                ${test.name}
+                <button class="start_test2" data-test-id="${test.id}">
+                  Пачаць тэст
+                  <img src="./img/Arrow_teast.svg" alt="" class="arrow_test2" />
+                </button>
+              </div>
+              ${isTeacher ? `
+                <div class="topic_actions">
+                  <button class="topic_icon edit" title="Рэдагаваць" data-id="${test.id}" data-name="${test.name}" data-time="${test.time}">✏️</button>
+                  <button class="topic_icon delete" title="Выдаліць" data-id="${test.id}" data-name="${test.name}">🗑️</button>
+                </div>
+              ` : ''}
+            `;
+            testsList.appendChild(wrapper);
+          });
+          
+          // Дадаем апрацоўшчыкі на кнопкі "Пачаць тэст"
+          document.querySelectorAll('.start_test2').forEach(btn => {
+            btn.addEventListener('click', function() {
+              const testId = this.dataset.testId;
+              // Тут будзе пераход на старонку праходжання тэста
+              Router.goToTestStudent(testId);
+            });
+          });
+          
+          // Дадаем апрацоўшчыкі на кнопкі рэдагавання
+          document.querySelectorAll('.edit').forEach(btn => {
+            btn.addEventListener('click', function() {
+              const id = this.dataset.id;
+              const name = this.dataset.name;
+              const time = this.dataset.time;
+              
+              modalTitle.textContent = '✏️ Рэдагаваць тэст';
+              testId.value = id;
+              testName.value = name;
+              testTime.value = time;
+              testModal.style.display = 'flex';
+            });
+          });
+          
+          // Дадаем апрацоўшчыкі на кнопкі выдалення
+          const deleteModal = document.getElementById('deleteModal');
+          const deleteTestName = document.getElementById('deleteTestName');
+          const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+          const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+          let currentDeleteId = null;
+          
+          document.querySelectorAll('.delete').forEach(btn => {
+            btn.addEventListener('click', function() {
+              currentDeleteId = this.dataset.id;
+              deleteTestName.textContent = this.dataset.name;
+              deleteModal.style.display = 'flex';
+            });
+          });
+          
+          confirmDeleteBtn.onclick = () => {
+            if (currentDeleteId) {
+              const updatedTests = tests.filter(t => t.id != currentDeleteId);
+              localStorage.setItem(storageKey, JSON.stringify(updatedTests));
+              deleteModal.style.display = 'none';
+              currentDeleteId = null;
+              loadTests();
+            }
+          };
+          
+          cancelDeleteBtn.onclick = () => {
+            deleteModal.style.display = 'none';
+            currentDeleteId = null;
+          };
+        }
+        
+        // Загружаем тэсты пры загрузцы старонкі
+        loadTests();
+        
+        // Зачыненне мадальных вокнаў пры кліку па-за імі
+        window.addEventListener('click', (e) => {
+          if (e.target === testModal) {
+            testModal.style.display = 'none';
+          }
+          if (e.target === deleteModal) {
+            deleteModal.style.display = 'none';
+          }
+        });
+        
+        // Дадаем стыль для пустога паведамлення
+        const style = document.createElement('style');
+        style.textContent = `
+          .empty-message {
+            text-align: center;
+            font-family: "Montserrat Alternates", sans-serif;
+            font-size: 18px;
+            color: #5f2d1e;
+            padding: 40px;
+            opacity: 0.7;
+          }
+        `;
+        document.head.appendChild(style);
+      });
+    </script>
   </body>
 </html>

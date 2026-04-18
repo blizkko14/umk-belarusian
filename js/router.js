@@ -39,7 +39,17 @@ class Router {
     static goToClasses() {
         window.location.href = 'classes.html';
     }
-
+/**
+ * Перайсці да старонкі класаў з указаннем тыпу (тэорыя ці тэсты)
+ * @param {string} type - Тып раздзела ('teory' ці 'tests')
+ */
+static goToClasses(type = null) {
+    if (type) {
+        window.location.href = `classes.html?type=${type}`;
+    } else {
+        window.location.href = 'classes.html';
+    }
+}
     /**
      * Перайсці да формы дадавання/рэдагавання ЦЭ
      * @param {string} type - Тып матэрыялу ('test', 'link', 'image')

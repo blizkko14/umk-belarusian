@@ -15,27 +15,30 @@
           <div class="parts_exit">
               <div class="exit-placeholder"></div> 
             <h1 class="title_section">Раздзелы</h1>
-            <button class="exit">Выхад</button>
+            <button class="exit" onclick="Router.logout()">Выхад</button>
           </div>
           <div class="parts">
+            <!-- Тэорыя - передаем тип 'teory' -->
             <div class="card">
               <div class="img_teory"><img src="./img/книга.png" alt="" class="teory" /></div>
               <h2 class="title_cards">Тэорыя</h2>
-              <button class="run">
+              <button class="run" onclick="Router.goToClasses('teory')">
                     <span>Перайсці</span> <img src="./img/Arrow 2.png" alt=""  class="Arrow"/>
               </button>
             </div>
+            <!-- Тэсты - передаем тип 'tests' -->
             <div class="card2" class="card">
               <div class="img_teory"><img src="./img/карандаш.png" alt="" class="pen" /></div>
               <h2 class="title_cards">Тэсты</h2>
-              <button class="run2" class="run">
+              <button class="run2" class="run" onclick="Router.goToClasses('tests')">
                     <span>Перайсці</span> <img src="./img/Arrow 2.png" alt="" class="Arrow" />
               </button>
             </div>
+            <!-- ЦЭ - остается без изменений -->
             <div class="card">
               <div class="img_teory"><img src="./img/бланк.png" alt="" class="teory" /></div>
               <h2 class="title_cards">ЦЭ</h2>
-              <button class="run">
+              <button onclick="Router.goToCE()" class="run">
                     <span>Перайсці</span> <img src="./img/Arrow 2.png" alt="" class="Arrow" />
               </button>
             </div>
@@ -43,5 +46,6 @@
         </div>
       </section>
     </main>
+    <script src="js/router.js"></script>
   </body>
 </html>

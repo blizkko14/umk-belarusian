@@ -16,43 +16,78 @@
             <ul class="list_classes">
               <div class="part1">
                 <li class="li_class">
-                <button class="but_class">5 клас</button>
-              </li>
-              <li class="li_class">
-                <button class="but_class">6 клас</button>
-              </li>
-              <li class="li_class">
-                <button class="but_class">7 клас</button>
-              </li>
-              <li class="classes_back">
-                <button class="back">
-                  <img src="./img/Arrow_back.svg" alt="" class="arrow_back" />
-                </button>
-              </li>
+                  <button class="but_class" data-class="5">5 клас</button>
+                </li>
+                <li class="li_class">
+                  <button class="but_class" data-class="6">6 клас</button>
+                </li>
+                <li class="li_class">
+                  <button class="but_class" data-class="7">7 клас</button>
+                </li>
+                <li class="classes_back">
+                  <button class="back" onclick="window.location.href='section.html'">
+                    <img src="./img/Arrow_back.svg" alt="" class="arrow_back" />
+                  </button>
+                </li>
               </div>
               <div class="part2">
-              <li class="li_class">
-                <button class="but_class">8 клас</button>
-              </li>
-              <li class="li_class">
-                <button class="but_class">9 клас</button>
-              </li>
-              <li class="li_class">
-                <button class="but_class">10 клас</button>
-              </li>
-              <li class="li_class">
-                <button class="but_class">11 клас</button>
-              </li>
-              <li class="classes_back">
-                <button class="back2">
-                  <img src="./img/Arrow_back.svg" alt="" class="arrow_back" />
-                </button>
-              </li>
+                <li class="li_class">
+                  <button class="but_class" data-class="8">8 клас</button>
+                </li>
+                <li class="li_class">
+                  <button class="but_class" data-class="9">9 клас</button>
+                </li>
+                <li class="li_class">
+                  <button class="but_class" data-class="10">10 клас</button>
+                </li>
+                <li class="li_class">
+                  <button class="but_class" data-class="11">11 клас</button>
+                </li>
+                <li class="classes_back">
+                  <button class="back2" onclick="window.location.href='section.html'">
+                    <img src="./img/Arrow_back.svg" alt="" class="arrow_back" />
+                  </button>
+                </li>
               </div>
             </ul>
           </div>
         </div>
       </section>
     </main>
+
+    <script src="js/router.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        // Атрымліваем параметр type з URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const sectionType = urlParams.get('type'); // 'teory' або 'tests'
+        
+        // Дадаем апрацоўшчыкі на ўсе кнопкі класаў
+        document.querySelectorAll('.but_class').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const classNumber = this.dataset.class;
+            
+            if (sectionType === 'teory') {
+              // Пераход да тэм тэорыі для выбранага класа
+              Router.goToTopicsTeory(classNumber);
+            } else if (sectionType === 'tests') {
+              // Пераход да тэстаў для выбранага класа
+              Router.goToTests(classNumber);
+            } else {
+              // Калі параметр не пазначаны - па змаўчанні на тэорыю
+              console.warn('Тып раздзела не пазначаны, пераход на тэорыю');
+              Router.goToTopicsTeory(classNumber);
+            }
+          });
+        });
+        
+        // Апцыянальна: мяняем загаловак у залежнасці ад тыпу
+        if (sectionType === 'teory') {
+          document.title = 'Класы - Тэорыя';
+        } else if (sectionType === 'tests') {
+          document.title = 'Класы - Тэсты';
+        }
+      });
+    </script>
   </body>
 </html>

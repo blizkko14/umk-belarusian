@@ -14,11 +14,11 @@
         <div class="container">
           <!-- Шапка с заголовком и кнопкой назад -->
           <div class="topics_header">
-            <button class="back_btn" onclick="history.back()">
+            <button class="back_btn" id="backBtn">
               <img src="./img/Arrow_back.svg" alt="Назад" class="back-arrow" />
             </button>
             <div class="block_title">
-              <h1 class="topics_title">5 клас</h1>
+              <h1 class="topics_title" id="classTitle">5 клас</h1>
             </div>
             <!-- Кнопка "Дадаць тэму" (только для учителя) -->
             <button
@@ -26,32 +26,30 @@
               id="addTopicBtn"
               style="display: flex"
             >
-              <img src="./img/plus.svg" alt="Назад" class="back-arrow" />
+              <img src="./img/plus.svg" alt="Дадаць" class="back-arrow" />
             </button>
           </div>
 
           <!-- Список тем -->
           <div class="topics_list" id="topicsList">
-            <div class="topic_block_wrapper">
-              <button class="topic_block">Правапiс</button>
-              <div class="topic_actions">
-                <button class="topic_icon edit" title="Рэдагаваць">✏️</button>
-                <button class="topic_icon delete" title="Выдаліць">🗑️</button>
-              </div>
-            </div>
-            <div class="topic_block_wrapper">
-              <button class="topic_block">Фанетыка</button>
-              <div class="topic_actions">
-                <button class="topic_icon edit" title="Рэдагаваць">✏️</button>
-                <button class="topic_icon delete" title="Выдаліць">🗑️</button>
-              </div>
-            </div>
-
             <!-- Темы будут загружены через JavaScript -->
           </div>
         </div>
       </section>
     </main>
+
+    <!-- Модальное окно добавления/редактирования темы -->
+    <div id="topicModal" class="modal" style="display: none">
+      <div class="modal-content">
+        <h3 id="modalTitle">📚 Дадаць новую тэму</h3>
+        <input type="hidden" id="topicId" value="">
+        <input type="text" class="modal-input" id="topicName" placeholder="Назва тэмы">
+        <div class="modal-buttons">
+          <button class="modal-btn save-modal" id="saveTopicBtn">Захаваць</button>
+          <button class="modal-btn cancel-modal" id="cancelTopicBtn">Адмяніць</button>
+        </div>
+      </div>
+    </div>
 
     <!-- Модальное окно подтверждения удаления -->
     <div id="deleteModal" class="modal" style="display: none">
@@ -77,7 +75,204 @@
       </div>
     </div>
 
-    <script src="js/users-data.js"></script>
-    <script src="js/topics.js"></script>
+    <script src="js/router.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        // Атрымліваем нумар класа з URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const classNumber = urlParams.get('class') || '5';
+        
+        // Абнаўляем загаловак
+        document.getElementById('classTitle').textContent = `${classNumber} клас`;
+        
+        // Кнопка назад - вяртаемся на classes.html з параметрам тыпу
+        document.getElementById('backBtn').addEventListener('click', () => {
+          window.location.href = `classes.html?type=teory`;
+        });
+        
+        // Элементы мадальнага акна
+        const topicModal = document.getElementById('topicModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const topicId = document.getElementById('topicId');
+        const topicName = document.getElementById('topicName');
+        const saveTopicBtn = document.getElementById('saveTopicBtn');
+        const cancelTopicBtn = document.getElementById('cancelTopicBtn');
+        
+        // Адкрыццё мадальнага акна для дадавання новай тэмы
+        document.getElementById('addTopicBtn').addEventListener('click', () => {
+          modalTitle.textContent = '📚 Дадаць новую тэму';
+          topicId.value = '';
+          topicName.value = '';
+          topicModal.style.display = 'flex';
+        });
+        
+        // Зачыненне мадальнага акна
+        cancelTopicBtn.addEventListener('click', () => {
+          topicModal.style.display = 'none';
+        });
+        
+        // Захаванне тэмы
+        saveTopicBtn.addEventListener('click', () => {
+          const name = topicName.value.trim();
+          
+          if (!name) {
+            alert('Калі ласка, увядзіце назву тэмы');
+            return;
+          }
+          
+          // Атрымліваем існуючыя тэмы з localStorage
+          const storageKey = `topics_${classNumber}`;
+          const topics = JSON.parse(localStorage.getItem(storageKey) || '[]');
+          
+          const id = topicId.value;
+          
+          if (id) {
+            // Рэдагаванне існуючай тэмы
+            const index = topics.findIndex(t => t.id == id);
+            if (index !== -1) {
+              topics[index].name = name;
+            }
+            alert('Тэма паспяхова абноўлена!');
+          } else {
+            // Стварэнне новай тэмы
+            const newTopic = {
+              id: Date.now(),
+              name: name,
+              class: classNumber,
+              createdAt: new Date().toISOString()
+            };
+            topics.push(newTopic);
+            alert('Тэма паспяхова створана!');
+          }
+          
+          // Захоўваем у localStorage
+          localStorage.setItem(storageKey, JSON.stringify(topics));
+          
+          // Зачыняем мадальнае акно
+          topicModal.style.display = 'none';
+          
+          // Абнаўляем спіс тэм
+          loadTopics();
+        });
+        
+        // Загрузка тэм
+        function loadTopics() {
+          const storageKey = `topics_${classNumber}`;
+          const topics = JSON.parse(localStorage.getItem(storageKey) || '[]');
+          const topicsList = document.getElementById('topicsList');
+          
+          if (topics.length === 0) {
+            topicsList.innerHTML = '<p class="empty-message">Няма тэм. Дадайце новую тэму.</p>';
+            return;
+          }
+          
+          topicsList.innerHTML = '';
+          
+          topics.forEach(topic => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'topic_block_wrapper';
+            wrapper.innerHTML = `
+              <button class="topic_block" data-topic-id="${topic.id}" data-topic-name="${topic.name}">
+                ${topic.name}
+              </button>
+              <div class="topic_actions">
+                <button class="topic_icon edit" title="Рэдагаваць" data-id="${topic.id}" data-name="${topic.name}">✏️</button>
+                <button class="topic_icon delete" title="Выдаліць" data-id="${topic.id}" data-name="${topic.name}">🗑️</button>
+              </div>
+            `;
+            topicsList.appendChild(wrapper);
+          });
+          
+          // Дадаем апрацоўшчыкі на кнопкі тэм
+          document.querySelectorAll('.topic_block').forEach(btn => {
+            btn.addEventListener('click', function() {
+              const topicId = this.dataset.topicId;
+              // Пераход да канспектаў гэтай тэмы
+              Router.goToConspect(topicId);
+            });
+          });
+          
+          // Дадаем апрацоўшчыкі на кнопкі рэдагавання
+          document.querySelectorAll('.edit').forEach(btn => {
+            btn.addEventListener('click', function() {
+              const id = this.dataset.id;
+              const name = this.dataset.name;
+              
+              modalTitle.textContent = '✏️ Рэдагаваць тэму';
+              topicId.value = id;
+              topicName.value = name;
+              topicModal.style.display = 'flex';
+            });
+          });
+          
+          // Дадаем апрацоўшчыкі на кнопкі выдалення
+          const deleteModal = document.getElementById('deleteModal');
+          const deleteTopicName = document.getElementById('deleteTopicName');
+          const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+          const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+          let currentDeleteId = null;
+          
+          document.querySelectorAll('.delete').forEach(btn => {
+            btn.addEventListener('click', function() {
+              currentDeleteId = this.dataset.id;
+              deleteTopicName.textContent = this.dataset.name;
+              deleteModal.style.display = 'flex';
+            });
+          });
+          
+          confirmDeleteBtn.onclick = () => {
+            if (currentDeleteId) {
+              const updatedTopics = topics.filter(t => t.id != currentDeleteId);
+              localStorage.setItem(storageKey, JSON.stringify(updatedTopics));
+              deleteModal.style.display = 'none';
+              currentDeleteId = null;
+              loadTopics();
+            }
+          };
+          
+          cancelDeleteBtn.onclick = () => {
+            deleteModal.style.display = 'none';
+            currentDeleteId = null;
+          };
+        }
+        
+        // Загружаем тэмы пры загрузцы старонкі
+        loadTopics();
+        
+        // Зачыненне мадальных вокнаў пры кліку па-за імі
+        window.addEventListener('click', (e) => {
+          const deleteModal = document.getElementById('deleteModal');
+          const topicModal = document.getElementById('topicModal');
+          if (e.target === deleteModal) {
+            deleteModal.style.display = 'none';
+          }
+          if (e.target === topicModal) {
+            topicModal.style.display = 'none';
+          }
+        });
+        
+        // Праверка ролі карыстальніка
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        const isTeacher = currentUser.role === 'teacher';
+        
+        if (!isTeacher) {
+          document.getElementById('addTopicBtn').style.display = 'none';
+        }
+        
+        // Дадаем стыль для пустога паведамлення
+        const style = document.createElement('style');
+        style.textContent = `
+          .empty-message {
+            text-align: center;
+            font-family: "Montserrat Alternates", sans-serif;
+            font-size: 18px;
+            color: #5f2d1e;
+            padding: 40px;
+            opacity: 0.7;
+          }
+        `;
+        document.head.appendChild(style);
+      });
+    </script>
   </body>
 </html>

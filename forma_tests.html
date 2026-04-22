@@ -167,5 +167,15 @@
 
       addQuestion();
     </script>
+    // Праверка аўтарызацыі
+if (!API.isAuthenticated()) {
+    window.location.href = 'authorization.html';
+}
+
+// Праверка ролі
+if (!API.isTeacher()) {
+    alert('У вас няма доступу да гэтай старонкі');
+    Router.goBack();
+}
   </body>
 </html>

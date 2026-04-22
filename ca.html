@@ -373,5 +373,16 @@
       // Загружаем матэрыялы пры загрузцы старонкі
       loadSavedMaterials();
     </script>
+      <script src="js/api.js"></script>
+    <script>
+        // ПРАВЕРКА АЎТАРЫЗАЦЫІ
+        if (!API.isAuthenticated()) {
+            window.location.href = 'authorization.html';
+        }
+      if (!API.isTeacher()) {
+        document.getElementById('addTopicBtn').style.display = 'none';
+        // Кнопкі .edit і .delete ствараюцца дынамічна, таму іх лепш хаваць у момант стварэння
+    }
+    </script>
   </body>
 </html>

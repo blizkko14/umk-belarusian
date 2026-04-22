@@ -18,7 +18,7 @@
             <button class="exit" onclick="Router.logout()">Выхад</button>
           </div>
           <div class="parts">
-            <!-- Тэорыя - передаем тип 'teory' -->
+            <!-- Тэорыя -->
             <div class="card">
               <div class="img_teory"><img src="./img/книга.png" alt="" class="teory" /></div>
               <h2 class="title_cards">Тэорыя</h2>
@@ -26,15 +26,15 @@
                     <span>Перайсці</span> <img src="./img/Arrow 2.png" alt=""  class="Arrow"/>
               </button>
             </div>
-            <!-- Тэсты - передаем тип 'tests' -->
-            <div class="card2" class="card">
+            <!-- Тэсты -->
+            <div class="card2">
               <div class="img_teory"><img src="./img/карандаш.png" alt="" class="pen" /></div>
               <h2 class="title_cards">Тэсты</h2>
-              <button class="run2" class="run" onclick="Router.goToClasses('tests')">
+              <button class="run2" onclick="Router.goToClasses('tests')">
                     <span>Перайсці</span> <img src="./img/Arrow 2.png" alt="" class="Arrow" />
               </button>
             </div>
-            <!-- ЦЭ - остается без изменений -->
+            <!-- ЦЭ -->
             <div class="card">
               <div class="img_teory"><img src="./img/бланк.png" alt="" class="teory" /></div>
               <h2 class="title_cards">ЦЭ</h2>
@@ -46,6 +46,18 @@
         </div>
       </section>
     </main>
+    
     <script src="js/router.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        // Праверка аўтарызацыі
+        if (!API.isAuthenticated()) {
+            window.location.href = 'authorization.html';
+        }
+        
+        // Паказваем кнопкі рэдагавання толькі для настаўніка
+        // (на гэтай старонцы іх няма, але пакідаем для аднастайнасці)
+        console.log('Карыстальнік:', API.getCurrentUser());
+    </script>
   </body>
 </html>

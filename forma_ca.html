@@ -309,8 +309,19 @@
                 return;
             }
 
-            window.location.href = 'ce.html';
+            window.location.href = 'ca.html';
+                // Праверка аўтарызацыі
+if (!API.isAuthenticated()) {
+    window.location.href = 'authorization.html';
+}
+
+// Праверка ролі
+if (!API.isTeacher()) {
+    alert('У вас няма доступу да гэтай старонкі');
+    Router.goBack();
+}
         });
     </script>
+
 </body>
 </html>

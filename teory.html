@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ВМК</title>
+    <title>Канспект</title>
     <link rel="stylesheet" href="css/null.css" />
     <link rel="stylesheet" href="css/fonts.css" />
     <link rel="stylesheet" href="css/style.css" />
@@ -13,18 +13,113 @@
       <section class="topics">
         <div class="container">
           <div class="topics_header">
-            <button class="back_btn" onclick="history.back()">
+            <button class="back_btn" id="backBtn">
               <img src="./img/Arrow_back.svg" alt="Назад" class="back-arrow" />
             </button>
             <div class="block_title">
-              <h1 class="topics_title">Правапiс</h1>
+              <h1 class="topics_title" id="conspectTitle">Загрузка...</h1>
             </div>
+            <div class="placeholder_btn"></div>
           </div>
-          <div class="text_teory_wrapper"></div>
-          <div class="dop_matirial"><h2 class="title_dop_material"> 📎 Дадатковыя матэрыялы:</h2></div>
-          <button class="start_test">Прайсці тэст <img src="./img/Arrow_teast.svg" alt="" class="arrow_test"></button>
+          
+          <div class="text_teory_wrapper" id="conspectContent">
+            <!-- Змест будзе загружаны -->
+          </div>
+          
+          <div class="dop_material" id="attachmentsSection" style="display: none;">
+            <h2 class="title_dop_material">📎 Дадатковыя матэрыялы:</h2>
+            <div id="attachmentsList" style="margin-top: 15px;"></div>
+          </div>
+          
+          <div class="save_btn_wrapper" style="margin-top: 30px;">
+            <button class="save_conspect_btn" id="editBtn" style="display: none;">
+              ✏️ Рэдагаваць канспект
+            </button>
+          </div>
         </div>
       </section>
     </main>
+
+    <script src="js/api.js"></script>
+    <script>
+      if (!API.isAuthenticated()) {
+          window.location.href = 'authorization.html';
+      }
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const conspectId = urlParams.get('id');
+      const classNumber = urlParams.get('class') || '5';
+      const isTeacher = API.isTeacher();
+
+      if (!conspectId) {
+          window.location.href = `topics_teory.html?class=${classNumber}`;
+      }
+
+      document.getElementById('backBtn').addEventListener('click', () => {
+          window.location.href = `topics_teory.html?class=${classNumber}`;
+      });
+
+      if (isTeacher) {
+          document.getElementById('editBtn').style.display = 'inline-block';
+          document.getElementById('editBtn').addEventListener('click', () => {
+              window.location.href = `forma_teory.html?class=${classNumber}&conspect_id=${conspectId}`;
+          });
+      }
+
+      // Загрузка канспекта
+      async function loadConspect() {
+          try {
+              const result = await API.getConspect(conspectId);
+              
+              if (result.success && result.data.conspect) {
+                  const conspect = result.data.conspect;
+                  
+                  document.getElementById('conspectTitle').textContent = conspect.title;
+                  document.getElementById('conspectContent').innerHTML = conspect.content;
+                  
+                  // Адлюстраванне дадатковых матэрыялаў
+                  if (conspect.attachments) {
+                      try {
+                          const attachments = JSON.parse(conspect.attachments);
+                          
+                          if ((attachments.files && attachments.files.length > 0) || 
+                              (attachments.links && attachments.links.length > 0)) {
+                              
+                              document.getElementById('attachmentsSection').style.display = 'block';
+                              const list = document.getElementById('attachmentsList');
+                              let html = '';
+                              
+                              if (attachments.files && attachments.files.length > 0) {
+                                  html += '<div style="font-weight: bold; margin-bottom: 10px;">📁 Файлы:</div>';
+                                  attachments.files.forEach(file => {
+                                      html += `<div style="margin-bottom: 8px;"><a href="${file.url}" target="_blank">📄 ${file.name}</a></div>`;
+                                  });
+                              }
+                              
+                              if (attachments.links && attachments.links.length > 0) {
+                                  html += '<div style="font-weight: bold; margin-top: 15px; margin-bottom: 10px;">🔗 Спасылкі:</div>';
+                                  attachments.links.forEach(link => {
+                                      html += `<div style="margin-bottom: 8px;"><a href="${link.url}" target="_blank">🔗 ${link.title}</a></div>`;
+                                  });
+                              }
+                              
+                              list.innerHTML = html;
+                          }
+                      } catch (e) {
+                          console.error('Памылка парсінгу attachments:', e);
+                      }
+                  }
+              } else {
+                  document.getElementById('conspectTitle').textContent = 'Канспект не знойдзены';
+                  document.getElementById('conspectContent').innerHTML = '<p>Канспект не знойдзены або быў выдалены.</p>';
+              }
+          } catch (error) {
+              console.error('Памылка:', error);
+              document.getElementById('conspectTitle').textContent = 'Памылка загрузкі';
+          }
+      }
+
+      loadConspect();
+    </script>
   </body>
 </html>

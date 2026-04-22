@@ -15,33 +15,22 @@
       <section class="forma_teory">
         <div class="container">
           <div class="forma_teory_header">
-            <button class="back_btn" onclick="history.back()">
+            <button class="back_btn" id="backBtn">
               <img src="./img/Arrow_back.svg" alt="Назад" class="back-arrow" />
             </button>
             <div class="block_title">
-              <h1 class="topics_title">Стварыць новы канспект</h1>
+              <h1 class="topics_title" id="pageTitle">Стварыць новы канспект</h1>
             </div>
+            <div class="placeholder_btn"></div>
           </div>
 
           <div class="forma_teory_wrapper">
             <div class="title_teory">
-              <h2 class="title_forma_teory">Тэма:</h2>
-              <input type="text" class="input_title" />
+              <h2 class="title_forma_teory">Назва канспекта:</h2>
+              <input type="text" id="conspectTitle" class="input_title" placeholder="Увядзіце назву канспекта" />
             </div>
 
-            <div class="class_forma">
-              <h2 class="title_forma_teory">Клас:</h2>
-              <select id="class" name="class" required>
-                <option value="">-- Выберыце клас --</option>
-                <option value="5">5 клас</option>
-                <option value="6">6 клас</option>
-                <option value="7">7 клас</option>
-                <option value="8">8 клас</option>
-                <option value="9">9 клас</option>
-                <option value="10">10 клас</option>
-                <option value="11">11 клас</option>
-              </select>
-            </div>
+            <input type="hidden" id="classId" value="">
 
             <div class="content_zmest">
               <h2 class="title_forma_teory">📝 Змест</h2>
@@ -51,123 +40,288 @@
             <div class="dop_content_forma">
               <h2 class="title_forma_teory">📎 Дадатковыя матэрыялы</h2>
               <div class="forma_dop_material">
-                <button class="add_fail">
+                <input type="file" id="fileInput" style="display: none;" multiple accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx">
+                <button class="add_fail" type="button" id="addFileBtn">
                   <img src="./img/plus_file.svg" alt="" class="plus_file" />
                   Дадаць файл
                 </button>
-                <button class="add_link">
+                <button class="add_link" type="button" id="addLinkBtn">
                   <img src="./img/plus_file.svg" alt="" class="plus_file" />
                   Дадаць спасылку
                 </button>
-                <div class="place_link"></div>
-              </div>
-
-              <div class="form-group test-link-group">
-                <label>🔗 Прывязка да тэста:</label>
-                <div class="test-link-wrapper">
-                  <select id="testSelect" class="form-select">
-                    <option value="">-- Не выбрана --</option>
-                    <option value="1">Правапіс -Н- і -НН- (5 клас)</option>
-                    <option value="2">Фанетыка (5 клас)</option>
-                    <option value="3">Назоўнік (6 клас)</option>
-                    <option value="4">Дзеяслоў (7 клас)</option>
-                  </select>
-                </div>
-                <small class="form-hint"
-                  >💡 Калі вы прывяжаце тэст, на старонцы канспекта з'явіцца
-                  кнопка "Перайсці да тэста"</small
-                >
+                
+                <div id="attachmentsList" style="width: 100%; margin-top: 15px;"></div>
               </div>
             </div>
+
             <div class="save_btn_wrapper">
-              <button class="save_conspect_btn" onclick="saveConspect()">
-                Захаваць канспект
+              <button class="save_conspect_btn" id="saveConspectBtn">
+                💾 Захаваць канспект
               </button>
             </div>
+            <div id="saveMessage" style="text-align: center; margin-top: 10px;"></div>
           </div>
         </div>
       </section>
     </main>
 
+    <!-- Мадальнае акно для дадавання спасылкі -->
+    <div id="linkModal" class="modal" style="display: none;">
+      <div class="modal-content">
+        <h3>🔗 Дадаць спасылку</h3>
+        <input type="text" id="linkUrl" class="modal-input" placeholder="URL-адрас (https://...)">
+        <input type="text" id="linkTitle" class="modal-input" placeholder="Назва спасылкі">
+        <div class="modal-buttons">
+          <button class="modal-btn save-modal" id="saveLinkBtn">Дадаць</button>
+          <button class="modal-btn cancel-modal" id="cancelLinkBtn">Адмяніць</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/router.js"></script>
+    <script src="js/api.js"></script>
     <script>
-      // Инициализация CKEditor 5 (с поддержкой изображений)
-      ClassicEditor.create(document.querySelector("#conspectContent"), {
-        toolbar: {
-          items: [
-            "heading",
-            "|",
-            "bold",
-            "italic",
-            "underline",
-            "strikethrough",
-            "|",
-            "insertImage",
-            "bulletedList",
-            "numberedList",
-            "|",
-            "alignment",
-            "|",
-            "link",
-            "insertTable",
-            "|",
-            "undo",
-            "redo",
-          ],
-        },
-        heading: {
-          options: [
-            {
-              model: "paragraph",
-              title: "Звычайны тэкст",
-              class: "ck-heading_paragraph",
-            },
-            {
-              model: "heading1",
-              view: "h1",
-              title: "Загаловак 1",
-              class: "ck-heading_heading1",
-            },
-            {
-              model: "heading2",
-              view: "h2",
-              title: "Загаловак 2",
-              class: "ck-heading_heading2",
-            },
-            {
-              model: "heading3",
-              view: "h3",
-              title: "Загаловак 3",
-              class: "ck-heading_heading3",
-            },
-          ],
-        },
-        placeholder: "Увядзіце тэкст канспекта...",
-        language: "ru",
-      }).catch((error) => {
-        console.error("Памылка ініцыялізацыі CKEditor:", error);
+      if (!API.isAuthenticated()) {
+          window.location.href = 'authorization.html';
+      }
+
+      if (!API.isTeacher()) {
+          alert('У вас няма доступу да гэтай старонкі');
+          window.location.href = 'section.html';
+      }
+
+      let editorInstance = null;
+      const urlParams = new URLSearchParams(window.location.search);
+      const classFromUrl = urlParams.get('class') || '5';
+      const conspectId = urlParams.get('conspect_id');
+      
+      let attachments = { files: [], links: [] };
+      
+      const backBtn = document.getElementById('backBtn');
+      const conspectTitle = document.getElementById('conspectTitle');
+      const saveBtn = document.getElementById('saveConspectBtn');
+      const saveMessage = document.getElementById('saveMessage');
+      const pageTitle = document.getElementById('pageTitle');
+      const fileInput = document.getElementById('fileInput');
+      const addFileBtn = document.getElementById('addFileBtn');
+      const addLinkBtn = document.getElementById('addLinkBtn');
+      const attachmentsList = document.getElementById('attachmentsList');
+      const classIdInput = document.getElementById('classId');
+      
+      classIdInput.value = classFromUrl;
+
+      const linkModal = document.getElementById('linkModal');
+      const linkUrl = document.getElementById('linkUrl');
+      const linkTitle = document.getElementById('linkTitle');
+      const saveLinkBtn = document.getElementById('saveLinkBtn');
+      const cancelLinkBtn = document.getElementById('cancelLinkBtn');
+
+      backBtn.addEventListener('click', () => {
+          window.location.href = `topics_teory.html?class=${classFromUrl}`;
       });
 
-      function viewSelectedTest() {
-        const select = document.getElementById("testSelect");
-        const selectedId = select.value;
-        const selectedText = select.options[select.selectedIndex]?.text;
+      addFileBtn.addEventListener('click', () => fileInput.click());
 
-        if (selectedId && selectedId !== "") {
-          alert(`Адкрыццё тэста: ${selectedText}\nID тэста: ${selectedId}`);
-        } else {
-          alert("Калі ласка, выберыце тэст");
-        }
+      fileInput.addEventListener('change', async (e) => {
+          const files = Array.from(e.target.files);
+          for (const file of files) {
+              saveMessage.style.color = 'blue';
+              saveMessage.textContent = `Загрузка файла: ${file.name}...`;
+              
+              const formData = new FormData();
+              formData.append('file', file);
+              
+              try {
+                  const response = await fetch('http://localhost/УМК/api/upload.php', {
+                      method: 'POST',
+                      body: formData
+                  });
+                  const result = await response.json();
+                  
+                  if (result.success) {
+                      attachments.files.push({
+                          name: result.data.name,
+                          url: result.data.url,
+                          type: result.data.type,
+                          size: result.data.size
+                      });
+                      renderAttachments();
+                      saveMessage.style.color = 'green';
+                      saveMessage.textContent = `Файл ${file.name} загружаны`;
+                  } else {
+                      saveMessage.style.color = 'red';
+                      saveMessage.textContent = `Памылка: ${result.message}`;
+                  }
+              } catch (error) {
+                  saveMessage.style.color = 'red';
+                  saveMessage.textContent = 'Памылка злучэння з серверам';
+              }
+          }
+          fileInput.value = '';
+          setTimeout(() => { saveMessage.textContent = ''; }, 3000);
+      });
+
+      addLinkBtn.addEventListener('click', () => {
+          linkUrl.value = '';
+          linkTitle.value = '';
+          linkModal.style.display = 'flex';
+      });
+
+      saveLinkBtn.addEventListener('click', () => {
+          const url = linkUrl.value.trim();
+          const title = linkTitle.value.trim();
+          
+          if (!url) { alert('Увядзіце URL-адрас'); return; }
+          if (!url.startsWith('http://') && !url.startsWith('https://')) {
+              alert('URL павінен пачынацца з http:// або https://');
+              return;
+          }
+          
+          attachments.links.push({ title: title || url, url: url });
+          renderAttachments();
+          linkModal.style.display = 'none';
+      });
+
+      cancelLinkBtn.addEventListener('click', () => linkModal.style.display = 'none');
+
+      function renderAttachments() {
+          let html = '';
+          
+          if (attachments.files.length > 0) {
+              html += '<div style="font-weight: bold; margin-bottom: 5px;">📁 Файлы:</div>';
+              attachments.files.forEach((file, index) => {
+                  html += `
+                      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px; padding: 5px; background: #e8f0fe; border-radius: 8px;">
+                          <span>📄 ${file.name}</span>
+                          <a href="${file.url}" target="_blank" style="margin-left: auto;">Адкрыць</a>
+                          <button onclick="removeFile(${index})" style="background: none; border: none; cursor: pointer; color: red;">✖</button>
+                      </div>
+                  `;
+              });
+          }
+          
+          if (attachments.links.length > 0) {
+              html += '<div style="font-weight: bold; margin-top: 10px; margin-bottom: 5px;">🔗 Спасылкі:</div>';
+              attachments.links.forEach((link, index) => {
+                  html += `
+                      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px; padding: 5px; background: #e8f0fe; border-radius: 8px;">
+                          <span>🔗 ${link.title}</span>
+                          <a href="${link.url}" target="_blank" style="margin-left: auto;">Адкрыць</a>
+                          <button onclick="removeLink(${index})" style="background: none; border: none; cursor: pointer; color: red;">✖</button>
+                      </div>
+                  `;
+              });
+          }
+          
+          attachmentsList.innerHTML = html || '<p style="opacity: 0.7;">Няма дададзеных матэрыялаў</p>';
       }
 
-      function getContent() {
-        const editor = ClassicEditor.instances.get("conspectContent");
-        if (editor) {
-          const content = editor.getData();
-          console.log("Змест канспекта:", content);
-          return content;
-        }
-        return document.getElementById("conspectContent").value;
+      window.removeFile = function(index) {
+          attachments.files.splice(index, 1);
+          renderAttachments();
+      };
+
+      window.removeLink = function(index) {
+          attachments.links.splice(index, 1);
+          renderAttachments();
+      };
+
+      ClassicEditor
+          .create(document.querySelector("#conspectContent"), {
+              toolbar: {
+                  items: ["heading", "|", "bold", "italic", "underline", "|", "insertImage", "bulletedList", "numberedList", "|", "link", "|", "undo", "redo"]
+              },
+              placeholder: "Увядзіце тэкст канспекта...",
+              language: "ru"
+          })
+          .then(editor => {
+              editorInstance = editor;
+              if (conspectId) {
+                  pageTitle.textContent = 'Рэдагаваць канспект';
+                  loadConspectData(conspectId);
+              }
+          })
+          .catch(error => console.error("Памылка CKEditor:", error));
+
+      async function loadConspectData(id) {
+          try {
+              const result = await API.getConspect(id);
+              if (result.success && result.data.conspect) {
+                  const conspect = result.data.conspect;
+                  conspectTitle.value = conspect.title;
+                  editorInstance.setData(conspect.content);
+                  classIdInput.value = conspect.class_id || classFromUrl;
+                  
+                  if (conspect.attachments) {
+                      try {
+                          attachments = JSON.parse(conspect.attachments);
+                          renderAttachments();
+                      } catch (e) {}
+                  }
+              }
+          } catch (error) {
+              console.error('Памылка загрузкі:', error);
+          }
       }
+
+      saveBtn.addEventListener('click', async () => {
+          const title = conspectTitle.value.trim();
+          const classId = classIdInput.value;
+          const content = editorInstance ? editorInstance.getData() : '';
+          
+          if (!title) {
+              saveMessage.style.color = 'red';
+              saveMessage.textContent = 'Увядзіце назву канспекта';
+              return;
+          }
+          
+          if (!content || content === '<p>&nbsp;</p>') {
+              saveMessage.style.color = 'red';
+              saveMessage.textContent = 'Увядзіце змест канспекта';
+              return;
+          }
+          
+          saveMessage.style.color = 'blue';
+          saveMessage.textContent = 'Захаванне...';
+          saveBtn.disabled = true;
+          
+          try {
+              let result;
+              const conspectData = {
+                  title: title,
+                  content: content,
+                  class_id: classId,
+                  attachments: JSON.stringify(attachments)
+              };
+              
+              if (conspectId) {
+                  conspectData.id = conspectId;
+                  result = await API.updateConspect(conspectData);
+              } else {
+                  result = await API.createConspect(conspectData);
+              }
+              
+              if (result.success) {
+                  saveMessage.style.color = 'green';
+                  saveMessage.textContent = conspectId ? 'Канспект абноўлены!' : 'Канспект створаны!';
+                  setTimeout(() => {
+                      window.location.href = `topics_teory.html?class=${classId}`;
+                  }, 1000);
+              } else {
+                  saveMessage.style.color = 'red';
+                  saveMessage.textContent = 'Памылка: ' + result.message;
+                  saveBtn.disabled = false;
+              }
+          } catch (error) {
+              saveMessage.style.color = 'red';
+              saveMessage.textContent = 'Памылка злучэння';
+              saveBtn.disabled = false;
+          }
+      });
+
+      linkModal.addEventListener('click', (e) => {
+          if (e.target === linkModal) linkModal.style.display = 'none';
+      });
     </script>
   </body>
 </html>

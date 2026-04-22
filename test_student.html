@@ -169,5 +169,14 @@
             });
         });
     </script>
+      <script src="js/api.js"></script>
+    <script>
+        // ПРАВЕРКА АЎТАРЫЗАЦЫІ
+        if (!API.isAuthenticated()) {
+            window.location.href = 'authorization.html';
+        }
+        
+        // Астатні код старонкі...
+    </script>
 </body>
 </html>

@@ -22,20 +22,22 @@
             <div class="placeholder_btn"></div>
           </div>
           
+          <!-- Змест канспекта -->
           <div class="text_teory_wrapper" id="conspectContent">
             <!-- Змест будзе загружаны -->
           </div>
           
-          <div class="dop_material" id="attachmentsSection" style="display: none;">
+          <!-- Дадатковыя матэрыялы -->
+          <div class="dop_matirial" id="attachmentsSection">
             <h2 class="title_dop_material">📎 Дадатковыя матэрыялы:</h2>
             <div id="attachmentsList" style="margin-top: 15px;"></div>
           </div>
           
-          <div class="save_btn_wrapper" style="margin-top: 30px;">
-            <button class="save_conspect_btn" id="editBtn" style="display: none;">
-              ✏️ Рэдагаваць канспект
-            </button>
-          </div>
+          <!-- Кнопка тэста -->
+          <button class="start_test" id="testBtn" style="display: none;">
+            Прайсці тэст 
+            <img src="./img/Arrow_teast.svg" alt="" class="arrow_test" />
+          </button>
         </div>
       </section>
     </main>
@@ -59,13 +61,6 @@
           window.location.href = `topics_teory.html?class=${classNumber}`;
       });
 
-      if (isTeacher) {
-          document.getElementById('editBtn').style.display = 'inline-block';
-          document.getElementById('editBtn').addEventListener('click', () => {
-              window.location.href = `forma_teory.html?class=${classNumber}&conspect_id=${conspectId}`;
-          });
-      }
-
       // Загрузка канспекта
       async function loadConspect() {
           try {
@@ -74,10 +69,25 @@
               if (result.success && result.data.conspect) {
                   const conspect = result.data.conspect;
                   
+                  // Назва
                   document.getElementById('conspectTitle').textContent = conspect.title;
+                  
+                  // Змест
                   document.getElementById('conspectContent').innerHTML = conspect.content;
                   
-                  // Адлюстраванне дадатковых матэрыялаў
+                  // Рэдагаванне (для настаўніка)
+                  if (isTeacher) {
+                      const editBtn = document.createElement('button');
+                      editBtn.className = 'save_conspect_btn';
+                      editBtn.textContent = '✏️ Рэдагаваць канспект';
+                      editBtn.style.cssText = 'display: block; margin: 20px auto; cursor: pointer;';
+                      editBtn.addEventListener('click', () => {
+                          window.location.href = `forma_teory.html?class=${classNumber}&conspect_id=${conspectId}`;
+                      });
+                      document.querySelector('.container').appendChild(editBtn);
+                  }
+                  
+                  // Дадатковыя матэрыялы
                   if (conspect.attachments) {
                       try {
                           const attachments = JSON.parse(conspect.attachments);
@@ -85,33 +95,37 @@
                           if ((attachments.files && attachments.files.length > 0) || 
                               (attachments.links && attachments.links.length > 0)) {
                               
-                              document.getElementById('attachmentsSection').style.display = 'block';
+                              document.getElementById('attachmentsSection').style.display = 'flex';
                               const list = document.getElementById('attachmentsList');
                               let html = '';
                               
                               if (attachments.files && attachments.files.length > 0) {
-                                  html += '<div style="font-weight: bold; margin-bottom: 10px;">📁 Файлы:</div>';
+                                  html += '<div style="font-weight: bold; margin-bottom: 10px;">Файлы:</div>';
                                   attachments.files.forEach(file => {
-                                      html += `<div style="margin-bottom: 8px;"><a href="${file.url}" target="_blank">📄 ${file.name}</a></div>`;
+                                      html += `<div style="margin-bottom: 8px;"><a href="${file.url}" target="_blank" style="color: #5f2d1e;">📄 ${file.name}</a></div>`;
                                   });
                               }
                               
                               if (attachments.links && attachments.links.length > 0) {
-                                  html += '<div style="font-weight: bold; margin-top: 15px; margin-bottom: 10px;">🔗 Спасылкі:</div>';
+                                  html += '<div style="font-weight: bold; margin-top: 15px; margin-bottom: 10px;"> Спасылкі:</div>';
                                   attachments.links.forEach(link => {
-                                      html += `<div style="margin-bottom: 8px;"><a href="${link.url}" target="_blank">🔗 ${link.title}</a></div>`;
+                                      html += `<div style="margin-bottom: 8px;"><a href="${link.url}" target="_blank" style="color: #5f2d1e;">🔗 ${link.title}</a></div>`;
                                   });
                               }
                               
                               list.innerHTML = html;
+                          } else {
+                              document.getElementById('attachmentsSection').style.display = 'none';
                           }
                       } catch (e) {
                           console.error('Памылка парсінгу attachments:', e);
+                          document.getElementById('attachmentsSection').style.display = 'none';
                       }
+                  } else {
+                      document.getElementById('attachmentsSection').style.display = 'none';
                   }
               } else {
                   document.getElementById('conspectTitle').textContent = 'Канспект не знойдзены';
-                  document.getElementById('conspectContent').innerHTML = '<p>Канспект не знойдзены або быў выдалены.</p>';
               }
           } catch (error) {
               console.error('Памылка:', error);

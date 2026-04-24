@@ -42,7 +42,7 @@
             errorMsg.textContent = 'Праверка...';
             
             try {
-                const response = await fetch('http://localhost/УМК/api/auth/login.php', {
+                const response = await fetch('http://localhost/UMK/api/auth/login.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username: username, password: password })

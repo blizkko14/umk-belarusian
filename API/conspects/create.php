@@ -10,9 +10,8 @@ if (!$input) {
     $input = $_POST;
 }
 
-// Праверка абавязковых палёў
 if (empty($input['title']) || empty($input['content']) || empty($input['class_id']) || empty($input['created_by'])) {
-    sendResponse(false, 'Не все обязательные данные переданы (title, content, class_id, created_by)');
+    sendResponse(false, 'Не все обязательные данные переданы');
 }
 
 $title = trim($input['title']);
@@ -24,7 +23,7 @@ $attachments = isset($input['attachments']) ? $input['attachments'] : null;
 try {
     $db = (new Database())->getConnection();
     
-    // Правяраем, ці існуе клас (табліца classes, а не classs)
+    // Правяраем, ці існуе клас (табліца classes)
     $checkStmt = $db->prepare("SELECT id FROM classes WHERE id = :class_id");
     $checkStmt->bindParam(':class_id', $class_id);
     $checkStmt->execute();

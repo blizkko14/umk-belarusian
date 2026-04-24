@@ -4,7 +4,7 @@
 
 class API {
     // Базовый URL к папке api
-    static baseUrl = 'http://localhost/УМК/api';
+    static baseUrl = 'http://localhost/UMK/api';
 
     static async request(endpoint, method = 'GET', data = null) {
         const url = `${this.baseUrl}/${endpoint}`;

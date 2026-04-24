@@ -3,12 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Стварыць канспект - УМК</title>
+    <title>Стварыць канспект</title>
     <link rel="stylesheet" href="css/null.css" />
     <link rel="stylesheet" href="css/fonts.css" />
     <link rel="stylesheet" href="css/style.css" />
 
-    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet" />
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
   </head>
   <body>
     <main>
@@ -30,17 +31,17 @@
               <input type="text" id="conspectTitle" class="input_title" placeholder="Увядзіце назву канспекта" />
             </div>
 
-            <input type="hidden" id="classId" value="">
+            <input type="hidden" id="classId" value="" />
 
             <div class="content_zmest">
               <h2 class="title_forma_teory">📝 Змест</h2>
-              <textarea id="conspectContent" name="content"></textarea>
+              <div id="conspectContent" style="height: 400px; background: white"></div>
             </div>
 
             <div class="dop_content_forma">
               <h2 class="title_forma_teory">📎 Дадатковыя матэрыялы</h2>
               <div class="forma_dop_material">
-                <input type="file" id="fileInput" style="display: none;" multiple accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx">
+                <input type="file" id="fileInput" style="display: none" multiple accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx" />
                 <button class="add_fail" type="button" id="addFileBtn">
                   <img src="./img/plus_file.svg" alt="" class="plus_file" />
                   Дадаць файл
@@ -49,28 +50,24 @@
                   <img src="./img/plus_file.svg" alt="" class="plus_file" />
                   Дадаць спасылку
                 </button>
-                
-                <div id="attachmentsList" style="width: 100%; margin-top: 15px;"></div>
+                <div id="attachmentsList" style="width: 100%; margin-top: 15px"></div>
               </div>
             </div>
 
             <div class="save_btn_wrapper">
-              <button class="save_conspect_btn" id="saveConspectBtn">
-                💾 Захаваць канспект
-              </button>
+              <button class="save_conspect_btn" id="saveConspectBtn">💾 Захаваць канспект</button>
             </div>
-            <div id="saveMessage" style="text-align: center; margin-top: 10px;"></div>
+            <div id="saveMessage" style="text-align: center; margin-top: 10px"></div>
           </div>
         </div>
       </section>
     </main>
 
-    <!-- Мадальнае акно для дадавання спасылкі -->
-    <div id="linkModal" class="modal" style="display: none;">
+    <div id="linkModal" class="modal" style="display: none">
       <div class="modal-content">
         <h3>🔗 Дадаць спасылку</h3>
-        <input type="text" id="linkUrl" class="modal-input" placeholder="URL-адрас (https://...)">
-        <input type="text" id="linkTitle" class="modal-input" placeholder="Назва спасылкі">
+        <input type="text" id="linkUrl" class="modal-input" placeholder="URL-адрас (https://...)" />
+        <input type="text" id="linkTitle" class="modal-input" placeholder="Назва спасылкі" />
         <div class="modal-buttons">
           <button class="modal-btn save-modal" id="saveLinkBtn">Дадаць</button>
           <button class="modal-btn cancel-modal" id="cancelLinkBtn">Адмяніць</button>
@@ -82,245 +79,286 @@
     <script src="js/api.js"></script>
     <script>
       if (!API.isAuthenticated()) {
-          window.location.href = 'authorization.html';
+        window.location.href = "authorization.html";
       }
-
       if (!API.isTeacher()) {
-          alert('У вас няма доступу да гэтай старонкі');
-          window.location.href = 'section.html';
+        alert("У вас няма доступу да гэтай старонкі");
+        window.location.href = "section.html";
       }
 
-      let editorInstance = null;
+      let quill = null;
       const urlParams = new URLSearchParams(window.location.search);
-      const classFromUrl = urlParams.get('class') || '5';
-      const conspectId = urlParams.get('conspect_id');
-      
+      const classFromUrl = urlParams.get("class") || "5";
+      const conspectId = urlParams.get("conspect_id");
       let attachments = { files: [], links: [] };
-      
-      const backBtn = document.getElementById('backBtn');
-      const conspectTitle = document.getElementById('conspectTitle');
-      const saveBtn = document.getElementById('saveConspectBtn');
-      const saveMessage = document.getElementById('saveMessage');
-      const pageTitle = document.getElementById('pageTitle');
-      const fileInput = document.getElementById('fileInput');
-      const addFileBtn = document.getElementById('addFileBtn');
-      const addLinkBtn = document.getElementById('addLinkBtn');
-      const attachmentsList = document.getElementById('attachmentsList');
-      const classIdInput = document.getElementById('classId');
-      
+
+      const backBtn = document.getElementById("backBtn");
+      const conspectTitle = document.getElementById("conspectTitle");
+      const saveBtn = document.getElementById("saveConspectBtn");
+      const saveMessage = document.getElementById("saveMessage");
+      const pageTitle = document.getElementById("pageTitle");
+      const fileInput = document.getElementById("fileInput");
+      const addFileBtn = document.getElementById("addFileBtn");
+      const addLinkBtn = document.getElementById("addLinkBtn");
+      const attachmentsList = document.getElementById("attachmentsList");
+      const classIdInput = document.getElementById("classId");
       classIdInput.value = classFromUrl;
 
-      const linkModal = document.getElementById('linkModal');
-      const linkUrl = document.getElementById('linkUrl');
-      const linkTitle = document.getElementById('linkTitle');
-      const saveLinkBtn = document.getElementById('saveLinkBtn');
-      const cancelLinkBtn = document.getElementById('cancelLinkBtn');
+      const linkModal = document.getElementById("linkModal");
+      const linkUrl = document.getElementById("linkUrl");
+      const linkTitle = document.getElementById("linkTitle");
+      const saveLinkBtn = document.getElementById("saveLinkBtn");
+      const cancelLinkBtn = document.getElementById("cancelLinkBtn");
 
-      backBtn.addEventListener('click', () => {
-          window.location.href = `topics_teory.html?class=${classFromUrl}`;
+      backBtn.addEventListener("click", () => {
+        window.location.href = `topics_teory.html?class=${classFromUrl}`;
       });
 
-      addFileBtn.addEventListener('click', () => fileInput.click());
-
-      fileInput.addEventListener('change', async (e) => {
-          const files = Array.from(e.target.files);
-          for (const file of files) {
-              saveMessage.style.color = 'blue';
-              saveMessage.textContent = `Загрузка файла: ${file.name}...`;
-              
-              const formData = new FormData();
-              formData.append('file', file);
-              
-              try {
-                  const response = await fetch('http://localhost/УМК/api/upload.php', {
-                      method: 'POST',
-                      body: formData
-                  });
-                  const result = await response.json();
-                  
-                  if (result.success) {
-                      attachments.files.push({
-                          name: result.data.name,
-                          url: result.data.url,
-                          type: result.data.type,
-                          size: result.data.size
-                      });
-                      renderAttachments();
-                      saveMessage.style.color = 'green';
-                      saveMessage.textContent = `Файл ${file.name} загружаны`;
-                  } else {
-                      saveMessage.style.color = 'red';
-                      saveMessage.textContent = `Памылка: ${result.message}`;
-                  }
-              } catch (error) {
-                  saveMessage.style.color = 'red';
-                  saveMessage.textContent = 'Памылка злучэння з серверам';
-              }
-          }
-          fileInput.value = '';
-          setTimeout(() => { saveMessage.textContent = ''; }, 3000);
-      });
-
-      addLinkBtn.addEventListener('click', () => {
-          linkUrl.value = '';
-          linkTitle.value = '';
-          linkModal.style.display = 'flex';
-      });
-
-      saveLinkBtn.addEventListener('click', () => {
-          const url = linkUrl.value.trim();
-          const title = linkTitle.value.trim();
-          
-          if (!url) { alert('Увядзіце URL-адрас'); return; }
-          if (!url.startsWith('http://') && !url.startsWith('https://')) {
-              alert('URL павінен пачынацца з http:// або https://');
-              return;
-          }
-          
-          attachments.links.push({ title: title || url, url: url });
-          renderAttachments();
-          linkModal.style.display = 'none';
-      });
-
-      cancelLinkBtn.addEventListener('click', () => linkModal.style.display = 'none');
-
-      function renderAttachments() {
-          let html = '';
-          
-          if (attachments.files.length > 0) {
-              html += '<div style="font-weight: bold; margin-bottom: 5px;">📁 Файлы:</div>';
-              attachments.files.forEach((file, index) => {
-                  html += `
-                      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px; padding: 5px; background: #e8f0fe; border-radius: 8px;">
-                          <span>📄 ${file.name}</span>
-                          <a href="${file.url}" target="_blank" style="margin-left: auto;">Адкрыць</a>
-                          <button onclick="removeFile(${index})" style="background: none; border: none; cursor: pointer; color: red;">✖</button>
-                      </div>
-                  `;
-              });
-          }
-          
-          if (attachments.links.length > 0) {
-              html += '<div style="font-weight: bold; margin-top: 10px; margin-bottom: 5px;">🔗 Спасылкі:</div>';
-              attachments.links.forEach((link, index) => {
-                  html += `
-                      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px; padding: 5px; background: #e8f0fe; border-radius: 8px;">
-                          <span>🔗 ${link.title}</span>
-                          <a href="${link.url}" target="_blank" style="margin-left: auto;">Адкрыць</a>
-                          <button onclick="removeLink(${index})" style="background: none; border: none; cursor: pointer; color: red;">✖</button>
-                      </div>
-                  `;
-              });
-          }
-          
-          attachmentsList.innerHTML = html || '<p style="opacity: 0.7;">Няма дададзеных матэрыялаў</p>';
+      function getFileIcon(type) {
+        if (!type) return "📄";
+        if (type.includes("word") || type.includes("document")) return "📝";
+        if (type.includes("powerpoint") || type.includes("presentation")) return "📊";
+        if (type.includes("excel") || type.includes("spreadsheet")) return "📈";
+        if (type.includes("pdf")) return "📕";
+        if (type.includes("image")) return "🖼️";
+        return "📄";
       }
 
-      window.removeFile = function(index) {
-          attachments.files.splice(index, 1);
-          renderAttachments();
-      };
+      // ========== QUILL ==========
+      quill = new Quill("#conspectContent", {
+        theme: "snow",
+        placeholder: "Увядзіце тэкст канспекта...",
+        modules: {
+          toolbar: [
+            [{ header: [1, 2, 3, false] }],
+            ["bold", "italic", "underline", "strike"],
+            [{ color: [] }, { background: [] }],
+            [{ align: [] }],
+            [{ list: "ordered" }, { list: "bullet" }],
+            ["link", "image", "blockquote"],
+            ["clean"],
+          ],
+        },
+      });
 
-      window.removeLink = function(index) {
-          attachments.links.splice(index, 1);
-          renderAttachments();
-      };
+      // Малюнкі
+      quill.getModule("toolbar").addHandler("image", function () {
+        const input = document.createElement("input");
+        input.setAttribute("type", "file");
+        input.setAttribute("accept", "image/*");
+        input.click();
+        input.onchange = async function () {
+          const file = input.files[0];
+          if (!file) return;
+          saveMessage.style.color = "blue";
+          saveMessage.textContent = "Загрузка малюнка...";
+          const formData = new FormData();
+          formData.append("file", file);
+          try {
+            const response = await fetch("http://localhost/UMK/api/upload.php", {
+              method: "POST",
+              body: formData,
+            });
+            const result = await response.json();
+            const url = result.url || (result.data && result.data.url);
+            if (url) {
+              const range = quill.getSelection(true);
+              quill.insertEmbed(range.index, "image", url);
+              saveMessage.style.color = "green";
+              saveMessage.textContent = "Малюнак загружаны";
+            } else {
+              saveMessage.style.color = "red";
+              saveMessage.textContent = "Памылка загрузкі";
+            }
+          } catch (error) {
+            saveMessage.style.color = "red";
+            saveMessage.textContent = "Памылка злучэння";
+          }
+          setTimeout(() => { saveMessage.textContent = ""; }, 3000);
+        };
+      });
 
-      ClassicEditor
-          .create(document.querySelector("#conspectContent"), {
-              toolbar: {
-                  items: ["heading", "|", "bold", "italic", "underline", "|", "insertImage", "bulletedList", "numberedList", "|", "link", "|", "undo", "redo"]
-              },
-              placeholder: "Увядзіце тэкст канспекта...",
-              language: "ru"
-          })
-          .then(editor => {
-              editorInstance = editor;
-              if (conspectId) {
-                  pageTitle.textContent = 'Рэдагаваць канспект';
-                  loadConspectData(conspectId);
-              }
-          })
-          .catch(error => console.error("Памылка CKEditor:", error));
+      if (conspectId) {
+        pageTitle.textContent = "Рэдагаваць канспект";
+        loadConspectData(conspectId);
+      }
 
       async function loadConspectData(id) {
-          try {
-              const result = await API.getConspect(id);
-              if (result.success && result.data.conspect) {
-                  const conspect = result.data.conspect;
-                  conspectTitle.value = conspect.title;
-                  editorInstance.setData(conspect.content);
-                  classIdInput.value = conspect.class_id || classFromUrl;
-                  
-                  if (conspect.attachments) {
-                      try {
-                          attachments = JSON.parse(conspect.attachments);
-                          renderAttachments();
-                      } catch (e) {}
-                  }
-              }
-          } catch (error) {
-              console.error('Памылка загрузкі:', error);
+        try {
+          const result = await API.getConspect(id);
+          if (result.success && result.data.conspect) {
+            const conspect = result.data.conspect;
+            conspectTitle.value = conspect.title;
+            quill.root.innerHTML = conspect.content;
+            classIdInput.value = conspect.class_id || classFromUrl;
+            if (conspect.attachments) {
+              try {
+                attachments = JSON.parse(conspect.attachments);
+                renderAttachments();
+              } catch (e) {}
+            }
           }
+        } catch (error) {
+          console.error("Памылка загрузкі:", error);
+        }
       }
 
-      saveBtn.addEventListener('click', async () => {
-          const title = conspectTitle.value.trim();
-          const classId = classIdInput.value;
-          const content = editorInstance ? editorInstance.getData() : '';
-          
-          if (!title) {
-              saveMessage.style.color = 'red';
-              saveMessage.textContent = 'Увядзіце назву канспекта';
-              return;
-          }
-          
-          if (!content || content === '<p>&nbsp;</p>') {
-              saveMessage.style.color = 'red';
-              saveMessage.textContent = 'Увядзіце змест канспекта';
-              return;
-          }
-          
-          saveMessage.style.color = 'blue';
-          saveMessage.textContent = 'Захаванне...';
-          saveBtn.disabled = true;
-          
+      addFileBtn.addEventListener("click", () => fileInput.click());
+      fileInput.addEventListener("change", async (e) => {
+        const files = Array.from(e.target.files);
+        for (const file of files) {
+          saveMessage.style.color = "blue";
+          saveMessage.textContent = `Загрузка файла: ${file.name}...`;
+          const formData = new FormData();
+          formData.append("file", file);
           try {
-              let result;
-              const conspectData = {
-                  title: title,
-                  content: content,
-                  class_id: classId,
-                  attachments: JSON.stringify(attachments)
-              };
-              
-              if (conspectId) {
-                  conspectData.id = conspectId;
-                  result = await API.updateConspect(conspectData);
-              } else {
-                  result = await API.createConspect(conspectData);
-              }
-              
-              if (result.success) {
-                  saveMessage.style.color = 'green';
-                  saveMessage.textContent = conspectId ? 'Канспект абноўлены!' : 'Канспект створаны!';
-                  setTimeout(() => {
-                      window.location.href = `topics_teory.html?class=${classId}`;
-                  }, 1000);
-              } else {
-                  saveMessage.style.color = 'red';
-                  saveMessage.textContent = 'Памылка: ' + result.message;
-                  saveBtn.disabled = false;
-              }
+            const response = await fetch("http://localhost/UMK/api/upload.php", {
+              method: "POST",
+              body: formData,
+            });
+            const result = await response.json();
+            if (result.success) {
+              attachments.files.push({
+                name: result.data.name,
+                url: result.data.url,
+                type: result.data.type,
+                size: result.data.size,
+              });
+              renderAttachments();
+              saveMessage.style.color = "green";
+              saveMessage.textContent = `Файл ${file.name} загружаны`;
+            } else {
+              saveMessage.style.color = "red";
+              saveMessage.textContent = `Памылка: ${result.message}`;
+            }
           } catch (error) {
-              saveMessage.style.color = 'red';
-              saveMessage.textContent = 'Памылка злучэння';
-              saveBtn.disabled = false;
+            saveMessage.style.color = "red";
+            saveMessage.textContent = "Памылка злучэння";
           }
+        }
+        fileInput.value = "";
+        setTimeout(() => { saveMessage.textContent = ""; }, 3000);
       });
 
-      linkModal.addEventListener('click', (e) => {
-          if (e.target === linkModal) linkModal.style.display = 'none';
+      addLinkBtn.addEventListener("click", () => {
+        linkUrl.value = "";
+        linkTitle.value = "";
+        linkModal.style.display = "flex";
+      });
+
+      saveLinkBtn.addEventListener("click", () => {
+        const url = linkUrl.value.trim();
+        const title = linkTitle.value.trim();
+        if (!url) { alert("Увядзіце URL-адрас"); return; }
+        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+          alert("URL павінен пачынацца з http:// або https://");
+          return;
+        }
+        attachments.links.push({ title: title || url, url: url });
+        renderAttachments();
+        linkModal.style.display = "none";
+      });
+
+      cancelLinkBtn.addEventListener("click", () => (linkModal.style.display = "none"));
+
+      function renderAttachments() {
+        let html = "";
+        if (attachments.files.length > 0) {
+          html += '<div style="font-weight: bold; margin-bottom: 5px;">📁 Файлы:</div>';
+          attachments.files.forEach((file, index) => {
+            html += `
+              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px; padding: 5px; background: #e8f0fe; border-radius: 8px;">
+                <span>${getFileIcon(file.type)} ${file.name}</span>
+                <a href="${file.url}" target="_blank" style="margin-left: auto;">Адкрыць</a>
+                <button onclick="removeFile(${index})" style="background: none; border: none; cursor: pointer; color: red;">✖</button>
+              </div>`;
+          });
+        }
+        if (attachments.links.length > 0) {
+          html += '<div style="font-weight: bold; margin-top: 10px; margin-bottom: 5px;">🔗 Спасылкі:</div>';
+          attachments.links.forEach((link, index) => {
+            html += `
+              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px; padding: 5px; background: #e8f0fe; border-radius: 8px;">
+                <span>🔗 ${link.title}</span>
+                <a href="${link.url}" target="_blank" style="margin-left: auto;">Адкрыць</a>
+                <button onclick="removeLink(${index})" style="background: none; border: none; cursor: pointer; color: red;">✖</button>
+              </div>`;
+          });
+        }
+        attachmentsList.innerHTML = html || '<p style="opacity: 0.7;">Няма дададзеных матэрыялаў</p>';
+      }
+
+      window.removeFile = function (index) {
+        attachments.files.splice(index, 1);
+        renderAttachments();
+      };
+      window.removeLink = function (index) {
+        attachments.links.splice(index, 1);
+        renderAttachments();
+      };
+
+      // ========== ЗАХАВАННЕ ==========
+      saveBtn.addEventListener("click", async () => {
+        const title = conspectTitle.value.trim();
+        const classId = classIdInput.value;
+        const content = quill ? quill.root.innerHTML : "";
+
+        if (!title) {
+          saveMessage.style.color = "red";
+          saveMessage.textContent = "Увядзіце назву канспекта";
+          return;
+        }
+
+        const hasContent = content && content !== "<p><br></p>" && content !== "";
+        const hasFiles = attachments.files.length > 0;
+        const hasLinks = attachments.links.length > 0;
+
+        if (!hasContent && !hasFiles && !hasLinks) {
+          saveMessage.style.color = "red";
+          saveMessage.textContent = "Дадайце тэкст, файлы ці спасылкі";
+          return;
+        }
+
+        saveMessage.style.color = "blue";
+        saveMessage.textContent = "Захаванне...";
+        saveBtn.disabled = true;
+
+        try {
+          let result;
+          const conspectData = {
+            title: title,
+            content: content,
+            class_id: classId,
+            attachments: JSON.stringify(attachments),
+          };
+
+          if (conspectId) {
+            conspectData.id = conspectId;
+            result = await API.updateConspect(conspectData);
+          } else {
+            result = await API.createConspect(conspectData);
+          }
+
+          if (result.success) {
+            saveMessage.style.color = "green";
+            saveMessage.textContent = conspectId ? "Канспект абноўлены!" : "Канспект створаны!";
+            setTimeout(() => {
+              window.location.href = `topics_teory.html?class=${classId}`;
+            }, 1000);
+          } else {
+            saveMessage.style.color = "red";
+            saveMessage.textContent = "Памылка: " + (result.message || "невядомая");
+            saveBtn.disabled = false;
+          }
+        } catch (error) {
+          saveMessage.style.color = "red";
+          saveMessage.textContent = "Памылка злучэння";
+          saveBtn.disabled = false;
+        }
+      });
+
+      linkModal.addEventListener("click", (e) => {
+        if (e.target === linkModal) linkModal.style.display = "none";
       });
     </script>
   </body>

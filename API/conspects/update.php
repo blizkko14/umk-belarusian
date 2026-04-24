@@ -10,50 +10,33 @@ if (!$input) {
     $input = $_POST;
 }
 
-// Праверка абавязковых палёў
 if (empty($input['id']) || empty($input['title']) || empty($input['content'])) {
-    sendResponse(false, 'Не все обязательные данные переданы (id, title, content)');
+    sendResponse(false, 'Не все обязательные данные переданы');
 }
 
 $id = intval($input['id']);
 $title = trim($input['title']);
 $content = $input['content'];
 $class_id = isset($input['class_id']) ? intval($input['class_id']) : null;
+$attachments = isset($input['attachments']) ? $input['attachments'] : null;
 
 try {
     $db = (new Database())->getConnection();
     
-    // Правяраем, ці існуе канспект
-    $checkStmt = $db->prepare("SELECT id FROM conspects WHERE id = :id");
-    $checkStmt->bindParam(':id', $id);
-    $checkStmt->execute();
-    
-    if ($checkStmt->rowCount() === 0) {
-        sendResponse(false, 'Конспект не найден');
-    }
-    
-    // Будуем запыт у залежнасці ад таго, ці мяняецца class_id
     if ($class_id) {
-        // Правяраем, ці існуе новая тэма
-        $classCheck = $db->prepare("SELECT id FROM classs WHERE id = :class_id");
-        $classCheck->bindParam(':class_id', $class_id);
-        $classCheck->execute();
-        
-        if ($classCheck->rowCount() === 0) {
-            sendResponse(false, 'Указанная тема не существует');
-        }
-        
         $query = "UPDATE conspects SET 
-                  class_id = :class_id,
                   title = :title, 
-                  content = :content 
+                  content = :content, 
+                  attachments = :attachments,
+                  class_id = :class_id
                   WHERE id = :id";
         $stmt = $db->prepare($query);
         $stmt->bindParam(':class_id', $class_id);
     } else {
         $query = "UPDATE conspects SET 
                   title = :title, 
-                  content = :content 
+                  content = :content, 
+                  attachments = :attachments
                   WHERE id = :id";
         $stmt = $db->prepare($query);
     }
@@ -61,9 +44,10 @@ try {
     $stmt->bindParam(':id', $id);
     $stmt->bindParam(':title', $title);
     $stmt->bindParam(':content', $content);
+    $stmt->bindParam(':attachments', $attachments);
     $stmt->execute();
     
-    sendResponse(true, 'Конспект успешно обновлен');
+    sendResponse(true, 'Конспект обновлен');
     
 } catch (PDOException $e) {
     sendResponse(false, 'Ошибка сервера: ' . $e->getMessage());

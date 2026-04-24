@@ -919,7 +919,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   border: 4px solid #5f2d1e;
-  color: #3e1509;
+  color: #551f0f;
   flex: 1;
   text-align: left;
   white-space: normal;
@@ -1229,39 +1229,188 @@
     padding: 12px;
   }
 }
-.dop_matirial {
-  font-family: "Montserrat Alternates", sans-serif;
-  font-size: 30px;
-  font-weight: 500;
-  line-height: 1.2;
-  text-align: center;
-  color: #5f2d1e;
-  padding: 41px 0;
-  max-width: 1290px;
+/* ===== СТАРОНКА ПРАГЛЯДУ КАНСПЕКТА ===== */
+/* Хедэр */
+.topics_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  gap: 10px;
+  position: relative;
+  min-width: 0;
   width: 100%;
-  margin: 0 auto;
-  background: #DFF1FE;
-  border: 3px solid #5f2d1e;
-  border-radius: 24px;
-  white-space: nowrap;
+}
+
+.topics_header .placeholder_btn {
+  flex-shrink: 0;
+  width: clamp(50px, 10vw, 80px);
+  height: clamp(40px, 7vw, 60px);
+  visibility: hidden;
+}
+
+/* Загаловак (назва канспекта) */
+.block_title {
+  flex: 1;
+  text-align: center;
+  min-width: 0;
+  padding: 0 5px;
+  max-width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.topics_title {
+  font-family: "Cormorant SC", serif;
+  font-size: clamp(18px, 3.5vw, 36px);
+  font-weight: 700;
+  color: #5f2d1e;
+  margin: 0;
+  line-height: 1.2;
   word-break: break-word;
   overflow-wrap: break-word;
-  box-sizing: border-box;
-  display: flex;
-  justify-content: center;
-  margin-bottom: 44px;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-width: 100%;
 }
 
+/* Абгортка тэксту канспекта */
 .text_teory_wrapper {
   font-family: "Montserrat Alternates", sans-serif;
-  font-size: 35px;
-  font-weight: 500;
-  line-height: 1.2;
-  text-align: center;
-  color: #5f2d1e;
-  padding: 56px 29px;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.8;
+  text-align: justify;
+  color: #3e1509;
+  padding: 40px 30px;
+  max-width: 1290px;
+  width: 100%;
+  margin: 20px auto;
+  background: #f9fdff;
+  border: 2px solid #5f2d1e;
+  border-radius: 24px;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
+/* Стылі для зместу з CKEditor */
+.text_teory_wrapper h1,
+.text_teory_wrapper h2,
+.text_teory_wrapper h3 {
+  font-family: "Cormorant SC", serif;
+  color: #5f2d1e;
+  margin: 25px 0 15px 0;
+  text-align: left;
+}
+
+.text_teory_wrapper h2 {
+  font-size: 28px;
+}
+
+.text_teory_wrapper h3 {
+  font-size: 24px;
+}
+
+.text_teory_wrapper p {
+  margin-bottom: 15px;
+  text-indent: 30px;
+}
+
+.text_teory_wrapper ul,
+.text_teory_wrapper ol {
+  margin: 15px 0 15px 30px;
+  text-align: left;
+}
+
+.text_teory_wrapper li {
+  margin-bottom: 8px;
+}
+
+/* Табліцы */
+.text_teory_wrapper table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 16px;
+}
+
+.text_teory_wrapper table td,
+.text_teory_wrapper table th {
+  border: 2px solid #5f2d1e;
+  padding: 12px 15px;
+  text-align: left;
+}
+
+.text_teory_wrapper table th {
+  background: #5f2d1e;
+  color: #ffffff;
+  font-weight: 600;
+  font-family: "Cormorant SC", serif;
+  font-size: 18px;
+}
+
+.text_teory_wrapper table tr:nth-child(even) {
+  background: #f0f7ff;
+}
+
+.text_teory_wrapper table tr:hover {
+  background: #e8f0fe;
+}
+
+/* Малюнкі */
+.text_teory_wrapper img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  margin: 15px 0;
+}
+
+/* Блок дадатковых матэрыялаў */
+.dop_matirial {
+  font-family: "Montserrat Alternates", sans-serif;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.4;
+  text-align: left;
+  color: #5f2d1e;
+  padding: 30px;
+  max-width: 1290px;
+  width: 100%;
+  margin: 0 auto 44px;
+  background: #dff1fe;
+  border: 3px solid #5f2d1e;
+  border-radius: 24px;
+  box-sizing: border-box;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  display: flex;
+  flex-direction: column;
+}
+
+.title_dop_material {
+  font-family: "Cormorant SC", serif;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.dop_matirial a {
+  color: #5f2d1e;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.dop_matirial a:hover {
+  color: #9b3b2f;
+  text-decoration: underline;
+}
+
+/* Кнопка тэста */
 .start_test {
   width: 553px;
   font-family: "Cormorant SC", serif;
@@ -1269,8 +1418,8 @@
   font-weight: 700;
   text-align: center;
   color: #5f2d1e;
-  background: #E6EBF5;
-  border: 3px solid #5F2D1E;
+  background: #e6ebf5;
+  border: 3px solid #5f2d1e;
   border-radius: 50px;
   padding: 17px 57px;
   margin-top: 70px;
@@ -1281,17 +1430,18 @@
   gap: 20px;
   margin-left: auto;
   margin-right: auto;
+  transition: all 0.3s ease;
 }
 
 .arrow_test {
-  width: 120px; /* ← уменьшил с 120px до 40px */
+  width: 60px;
   height: auto;
   transition: transform 0.3s ease;
 }
 
 .start_test:hover {
   background: #5f2d1e;
-  color: #E6EBF5;
+  color: #e6ebf5;
 }
 
 .start_test:hover .arrow_test {
@@ -1299,12 +1449,41 @@
   transform: translateX(5px);
 }
 
+/* Дыяпазон 764px - 1185px */
+@media (min-width: 764px) and (max-width: 1185px) {
+  .topics_header {
+    gap: 5px;
+  }
+  .topics_header .back_btn {
+    width: clamp(40px, 8vw, 60px);
+    height: clamp(35px, 6vw, 50px);
+  }
+  .topics_header .placeholder_btn {
+    width: clamp(40px, 8vw, 60px);
+    height: clamp(35px, 6vw, 50px);
+  }
+  .topics_title {
+    font-size: clamp(16px, 3vw, 28px);
+    -webkit-line-clamp: 4;
+  }
+  .block_title {
+    padding: 0 3px;
+  }
+}
+/* Адаптыў 768px */
 @media (max-width: 768px) {
+  .text_teory_wrapper {
+    font-size: 16px;
+    padding: 25px 15px;
+    width: 95%;
+  }
+  .text_teory_wrapper h2 {
+    font-size: 24px;
+  }
   .dop_matirial {
-    white-space: normal;
-    font-size: clamp(24px, 5vw, 35px);
-    padding: 30px 15px;
-    width: 90%;
+    font-size: 18px;
+    padding: 25px 15px;
+    width: 95%;
   }
   .start_test {
     width: 90%;
@@ -1313,7 +1492,40 @@
     gap: 15px;
   }
   .arrow_test {
-    width: 30px;
+    width: 40px;
+  }
+  .text_teory_wrapper table {
+    font-size: 14px;
+  }
+  .text_teory_wrapper table td,
+  .text_teory_wrapper table th {
+    padding: 8px 10px;
+  }
+}
+/* Адаптыў 480px */
+@media (max-width: 480px) {
+  .topics_header {
+    gap: 3px;
+  }
+  .topics_header .back_btn {
+    width: 40px;
+    height: 35px;
+  }
+  .topics_header .placeholder_btn {
+    width: 40px;
+    height: 35px;
+  }
+  .topics_title {
+    font-size: clamp(14px, 4vw, 22px);
+    -webkit-line-clamp: 5;
+    line-height: 1.1;
+  }
+  .block_title {
+    padding: 0 2px;
+  }
+  .text_teory_wrapper {
+    font-size: 15px;
+    padding: 20px 12px;
   }
 }
 /* ===== ФОРМА СОЗДАНИЯ КОНСПЕКТА ===== */
@@ -2777,7 +2989,7 @@ select:hover {
 .modal-buttons {
   display: flex;
   gap: 15px;
-  justify-content: flex-end;
+  justify-content: center;
   margin-top: 25px;
 }
 

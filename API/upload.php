@@ -1,9 +1,11 @@
 <?php
-require_once __DIR__ . '/config/database.php';
-
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
+
+// Включаем отладку
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
@@ -11,58 +13,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(['success' => false, 'message' => 'Метод не поддерживается']);
+    echo json_encode(['success' => false, 'message' => 'Метод не поддерживается'], JSON_UNESCAPED_UNICODE);
     exit();
 }
 
-// Праверка наяўнасці файла
-if (!isset($_FILES['file'])) {
-    echo json_encode(['success' => false, 'message' => 'Файл не загружаны']);
+if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
+    echo json_encode(['success' => false, 'message' => 'Файл не выбран или ошибка загрузки'], JSON_UNESCAPED_UNICODE);
     exit();
 }
 
 $file = $_FILES['file'];
-$allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-$maxSize = 10 * 1024 * 1024; // 10 MB
+$ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
 
-// Праверка тыпу файла
-if (!in_array($file['type'], $allowedTypes)) {
-    echo json_encode(['success' => false, 'message' => 'Недапушчальны тып файла']);
+// Проверка по расширению (более надёжно, чем MIME)
+$allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'];
+
+if (!in_array($ext, $allowedExtensions)) {
+    echo json_encode([
+        'success' => false, 
+        'message' => 'Недопустимый тип файла. Разрешены: ' . implode(', ', $allowedExtensions)
+    ], JSON_UNESCAPED_UNICODE);
     exit();
 }
 
-// Праверка памеру
-if ($file['size'] > $maxSize) {
-    echo json_encode(['success' => false, 'message' => 'Файл занадта вялікі (макс. 10 MB)']);
-    exit();
-}
-
-// Ствараем унікальнае імя файла
-$ext = pathinfo($file['name'], PATHINFO_EXTENSION);
 $newName = uniqid() . '_' . time() . '.' . $ext;
-$uploadDir = __DIR__ . '/../uploads/';
+$uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/UMK/uploads/';
 
-// Ствараем папку, калі яе няма
 if (!file_exists($uploadDir)) {
     mkdir($uploadDir, 0777, true);
 }
 
 $uploadPath = $uploadDir . $newName;
 
-// Перамяшчаем файл
 if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
-    $fileUrl = 'http://localhost/УМК/api/uploads/' . $newName;
+    $fileUrl = 'http://localhost/UMK/uploads/' . $newName;
     echo json_encode([
         'success' => true,
-        'message' => 'Файл паспяхова загружаны',
+        'message' => 'Файл успешно загружен',
         'data' => [
             'url' => $fileUrl,
             'name' => $file['name'],
             'type' => $file['type'],
             'size' => $file['size']
         ]
-    ]);
+    ], JSON_UNESCAPED_UNICODE);
 } else {
-    echo json_encode(['success' => false, 'message' => 'Памылка захавання файла']);
+    echo json_encode([
+        'success' => false, 
+        'message' => 'Ошибка сохранения файла на сервер'
+    ], JSON_UNESCAPED_UNICODE);
 }
 ?>

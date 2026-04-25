@@ -54,6 +54,24 @@
               </div>
             </div>
 
+            <!-- Прывязка да тэста -->
+            <div class="form-group test-link-group" style="margin-top: 25px;">
+              <label style="font-family: 'Montserrat Alternates', sans-serif; font-size: 22px; font-weight: 500; color: #5f2d1e; display: block; margin-bottom: 10px;">
+                🔗 Прывязка да тэста:
+              </label>
+              <div class="test-link-wrapper" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                <select id="testSelect" class="form-select" style="flex: 1; padding: 12px 20px; border: 3px solid #5f2d1e; border-radius: 50px; background: #f9fdff; font-family: 'Montserrat Alternates', sans-serif;">
+                  <option value="">-- Не выбрана --</option>
+                </select>
+                <button id="refreshTestsBtn" style="padding: 10px 15px; border: 2px solid #5f2d1e; border-radius: 50px; cursor: pointer; background: #E6EBF5; font-family: 'Cormorant SC', serif;">
+                  🔄 Абнавіць
+                </button>
+              </div>
+              <small style="font-family: 'Montserrat Alternates', sans-serif; font-size: 13px; color: #3e1509; opacity: 0.7; margin-top: 8px; display: block;">
+                💡 Калі вы прывяжаце тэст, на старонцы канспекта з'явіцца кнопка "Прайсці тэст"
+              </small>
+            </div>
+
             <div class="save_btn_wrapper">
               <button class="save_conspect_btn" id="saveConspectBtn">💾 Захаваць канспект</button>
             </div>
@@ -91,6 +109,7 @@
       const classFromUrl = urlParams.get("class") || "5";
       const conspectId = urlParams.get("conspect_id");
       let attachments = { files: [], links: [] };
+      let selectedTestId = null; // Захоўваем выбраны тэст
 
       const backBtn = document.getElementById("backBtn");
       const conspectTitle = document.getElementById("conspectTitle");
@@ -102,6 +121,8 @@
       const addLinkBtn = document.getElementById("addLinkBtn");
       const attachmentsList = document.getElementById("attachmentsList");
       const classIdInput = document.getElementById("classId");
+      const testSelect = document.getElementById("testSelect");
+      const refreshTestsBtn = document.getElementById("refreshTestsBtn");
       classIdInput.value = classFromUrl;
 
       const linkModal = document.getElementById("linkModal");
@@ -112,6 +133,35 @@
 
       backBtn.addEventListener("click", () => {
         window.location.href = `topics_teory.html?class=${classFromUrl}`;
+      });
+
+      // Загрузка спіса тэстаў для гэтага класа
+      async function loadTests() {
+        try {
+          const result = await API.getTests(classFromUrl);
+          if (result.success && result.data.tests) {
+            testSelect.innerHTML = '<option value="">-- Не выбрана --</option>';
+            result.data.tests.forEach(test => {
+              const option = document.createElement("option");
+              option.value = test.id;
+              option.textContent = test.title;
+              testSelect.appendChild(option);
+            });
+          }
+        } catch (error) {
+          console.error("Памылка загрузкі тэстаў:", error);
+        }
+      }
+
+      loadTests();
+      
+      refreshTestsBtn.addEventListener("click", () => {
+        testSelect.innerHTML = '<option value="">Загрузка...</option>';
+        loadTests();
+      });
+
+      testSelect.addEventListener("change", () => {
+        selectedTestId = testSelect.value || null;
       });
 
       function getFileIcon(type) {
@@ -191,6 +241,16 @@
             conspectTitle.value = conspect.title;
             quill.root.innerHTML = conspect.content;
             classIdInput.value = conspect.class_id || classFromUrl;
+            
+            // Загружаем прывязаны тэст, калі ёсць
+            if (conspect.linked_test_id) {
+              selectedTestId = conspect.linked_test_id;
+              // Пачакаем загрузкі спіса, потым выберам
+              setTimeout(() => {
+                testSelect.value = conspect.linked_test_id;
+              }, 500);
+            }
+            
             if (conspect.attachments) {
               try {
                 attachments = JSON.parse(conspect.attachments);
@@ -330,6 +390,7 @@
             content: content,
             class_id: classId,
             attachments: JSON.stringify(attachments),
+            linked_test_id: selectedTestId || null  // Захоўваем прывязаны тэст
           };
 
           if (conspectId) {

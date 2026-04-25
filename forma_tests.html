@@ -12,138 +12,135 @@
     <main>
       <section class="add-test">
         <div class="container">
-          <!-- Хедер -->
           <div class="add-test_header">
-            <button class="back_btn" onclick="history.back()">
+            <button class="back_btn" id="backBtn">
               <img src="./img/Arrow_back.svg" alt="Назад" class="back-arrow" />
             </button>
             <div class="block_title">
-              <h1 class="add-test_title">Дадаць новы тэст</h1>
+              <h1 class="add-test_title" id="pageTitle">Дадаць новы тэст</h1>
             </div>
             <div class="placeholder_btn"></div>
           </div>
 
-          <!-- Форма -->
           <div class="add-test_form">
-            <!-- Назва тэста -->
             <div class="form_field">
               <label class="form_label">📝 Назва тэста</label>
-              <input
-                type="text"
-                class="form_input"
-                placeholder="Напрыклад: Правапіс -Н- і -НН-"
-                id="testTitle"
-              />
+              <input type="text" class="form_input" id="testTitle" />
             </div>
 
-            <!-- Клас і час -->
-            <div class="form_row">
-              <div class="form_field half">
-                <label class="form_label">Клас</label>
-                <select class="form_select" id="testClass">
-                  <option value="">-- Выберыце клас --</option>
-                  <option>5 клас</option>
-                  <option>6 клас</option>
-                  <option>7 клас</option>
-                  <option>8 клас</option>
-                  <option>9 клас</option>
-                  <option>10 клас</option>
-                  <option>11 клас</option>
-                </select>
-              </div>
-              <div class="form_field half">
-                <label class="form_label">Час (хвілін)</label>
-                <input
-                  type="number"
-                  class="form_input"
-                  value="5"
-                  id="testTime"
-                />
-              </div>
+            <input type="hidden" id="classId" value="" />
+            <input type="hidden" id="editTestId" value="" />
+
+            <div class="form_field">
+              <label class="form_label">⏱️ Час (хвілін)</label>
+              <input type="number" class="form_input" value="20" id="testTime" min="1" />
             </div>
 
-            <!-- Пытанні -->
             <div class="questions_section">
               <div class="questions_header">
                 <label class="form_label">Пытанні</label>
-                <button
-                  type="button"
-                  class="add_question_btn"
-                  id="addQuestionBtn"
-                >
-                  + Дадаць пытанне
-                </button>
+                <button type="button" class="add_question_btn" id="addQuestionBtn">+ Дадаць пытанне</button>
               </div>
               <div id="questionsContainer"></div>
             </div>
 
-            <!-- Кнопка захавання -->
+            <div id="saveMessage" style="text-align: center; margin-top: 10px"></div>
+
             <div class="form_actions">
-              <button class="save_btn" id="saveTestBtn">
-                Захаваць тэст
-              </button>
+              <button class="save_btn" id="saveTestBtn">💾 Захаваць тэст</button>
             </div>
           </div>
         </div>
       </section>
     </main>
 
+    <script src="js/api.js"></script>
     <script>
+      if (!API.isAuthenticated()) {
+        window.location.href = "authorization.html";
+      }
+      if (!API.isTeacher()) {
+        alert("У вас няма доступу да гэтай старонкі");
+        window.location.href = "section.html";
+      }
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const classFromUrl = urlParams.get("class") || "5";
+      const editTestId = urlParams.get("test_id");
+
+      document.getElementById("classId").value = classFromUrl;
+
+      if (editTestId) {
+        document.getElementById("pageTitle").textContent = "Рэдагаваць тэст";
+        document.getElementById("editTestId").value = editTestId;
+        loadTestData(editTestId);
+      }
+
       let questionCounter = 0;
 
-      function addQuestion() {
+      document.getElementById("backBtn").addEventListener("click", () => {
+        window.location.href = `tests.html?class=${classFromUrl}`;
+      });
+
+      function addQuestion(questionData = null) {
         questionCounter++;
         const container = document.getElementById("questionsContainer");
-        const questionId = Date.now();
-
+        const questionId = Date.now() + Math.random();
         const questionDiv = document.createElement("div");
         questionDiv.className = "question_card";
         questionDiv.dataset.id = questionId;
         questionDiv.innerHTML = `
-        <div class="question_header">
+          <div class="question_header">
             <span class="question_title">Пытанне ${questionCounter}</span>
-            <button class="remove_question_btn" onclick="this.closest('.question_card').remove()">✖</button>
-        </div>
-        <input type="text" class="question_text" placeholder="Тэкст пытання">
-        <div class="question_type">
-            <label><input type="radio" name="type_${questionId}" value="single" class="type_radio" checked onchange="toggleAnswersContainer(this)"> Адзінарны выбар</label>
-            <label><input type="radio" name="type_${questionId}" value="multiple" class="type_radio" onchange="toggleAnswersContainer(this)"> Множны выбар</label>
-            <label><input type="radio" name="type_${questionId}" value="text" class="type_radio" onchange="toggleAnswersContainer(this)"> Увод радка</label>
-        </div>
-        <div class="answers_container"></div>
-        <div class="text_answer_container" style="display: none;">
-            <input type="text" class="text_correct_answer" placeholder="Увядзіце правільны адказ">
+            <button class="remove_question_btn" onclick="this.closest('.question_card').remove(); updateNumbers();">✖</button>
+          </div>
+          <input type="text" class="question_text" placeholder="Тэкст пытання" value="${questionData ? questionData.text : ""}">
+          <div class="question_type">
+            <label><input type="radio" name="type_${questionId}" value="single" class="type_radio" ${!questionData || questionData.type === "single" ? "checked" : ""} onchange="toggleAnswersContainer(this)"> Адзінарны выбар</label>
+            <label><input type="radio" name="type_${questionId}" value="multiple" class="type_radio" ${questionData && questionData.type === "multiple" ? "checked" : ""} onchange="toggleAnswersContainer(this)"> Множны выбар</label>
+            <label><input type="radio" name="type_${questionId}" value="text" class="type_radio" ${questionData && questionData.type === "text" ? "checked" : ""} onchange="toggleAnswersContainer(this)"> Увод радка</label>
+          </div>
+          <div class="answers_container" style="${questionData && questionData.type === "text" ? "display:none;" : ""}"></div>
+          <div class="text_answer_container" style="${questionData && questionData.type === "text" ? "display:block;" : "display:none;"}">
+            <input type="text" class="text_correct_answer" placeholder="Увядзіце правільны адказ" value="${questionData && questionData.correctAnswer ? questionData.correctAnswer : ""}">
             <div class="text-answer-hint">Адказ будзе правярацца без уліку рэгістра</div>
-        </div>
-        <button class="add_answer_btn" onclick="addAnswer(this)">+ Дадаць адказ</button>
-    `;
+          </div>
+          <button class="add_answer_btn" onclick="addAnswer(this)" style="${questionData && questionData.type === "text" ? "display:none;" : ""}">+ Дадаць адказ</button>
+        `;
         container.appendChild(questionDiv);
-        addAnswer(questionDiv.querySelector(".add_answer_btn"));
+
+        if (questionData && questionData.answers && questionData.type !== "text") {
+          const answersContainer = questionDiv.querySelector(".answers_container");
+          questionData.answers.forEach((answer) => {
+            addAnswerToContainer(answersContainer, answer.text, answer.correct);
+          });
+        } else if (!questionData) {
+          addAnswer(questionDiv.querySelector(".add_answer_btn"));
+        }
       }
 
-      function addAnswer(button) {
-        const container = button
-          .closest(".question_card")
-          .querySelector(".answers_container");
+      function addAnswerToContainer(container, text = "", isCorrect = false) {
         const answerRow = document.createElement("div");
         answerRow.className = "answer_row";
         answerRow.innerHTML = `
-        <input type="text" class="answer_input" placeholder="Варыянт адказу">
-        <label><input type="checkbox" class="correct_checkbox"> Правільны</label>
-        <button class="remove_answer_btn" onclick="this.parentElement.remove()">✖</button>
-    `;
+          <input type="text" class="answer_input" placeholder="Варыянт адказу" value="${text}">
+          <label><input type="checkbox" class="correct_checkbox" ${isCorrect ? "checked" : ""}> Правільны</label>
+          <button class="remove_answer_btn" onclick="this.parentElement.remove()">✖</button>
+        `;
         container.appendChild(answerRow);
       }
 
-      function toggleAnswersContainer(radio) {
+      window.addAnswer = function (button) {
+        const container = button.closest(".question_card").querySelector(".answers_container");
+        addAnswerToContainer(container);
+      };
+
+      window.toggleAnswersContainer = function (radio) {
         const card = radio.closest(".question_card");
         const answersContainer = card.querySelector(".answers_container");
-        const textAnswerContainer = card.querySelector(
-          ".text_answer_container",
-        );
+        const textAnswerContainer = card.querySelector(".text_answer_container");
         const addAnswerBtn = card.querySelector(".add_answer_btn");
         const isTextType = radio.value === "text";
-
         if (isTextType) {
           answersContainer.style.display = "none";
           textAnswerContainer.style.display = "block";
@@ -154,28 +151,129 @@
           addAnswerBtn.style.display = "inline-block";
           if (answersContainer.children.length === 0) addAnswer(addAnswerBtn);
         }
+      };
+
+      window.updateNumbers = function () {
+        const questions = document.querySelectorAll(".question_card");
+        questions.forEach((q, i) => {
+          q.querySelector(".question_title").textContent = `Пытанне ${i + 1}`;
+        });
+        questionCounter = questions.length;
+      };
+
+      async function loadTestData(testId) {
+        try {
+          const result = await API.getTestQuestions(testId);
+          if (result.success) {
+            document.getElementById("testTitle").value = result.data.test.title;
+            document.getElementById("testTime").value = result.data.test.time_limit || 20;
+            if (result.data.questions) {
+              result.data.questions.forEach((q) => {
+                addQuestion({
+                  text: q.question_text,
+                  type: q.question_type,
+                  correctAnswer: q.correct_text_answer,
+                  answers: q.answers ? q.answers.map((a) => ({
+                    text: a.answer_text,
+                    correct: a.is_correct == 1,
+                  })) : [],
+                });
+              });
+            }
+          }
+        } catch (error) {
+          console.error("Памылка загрузкі:", error);
+        }
       }
 
-      document
-        .getElementById("addQuestionBtn")
-        ?.addEventListener("click", addQuestion);
-      document.getElementById("saveTestBtn")?.addEventListener("click", () => {
-        const title = document.getElementById("testTitle")?.value;
-        if (!title) return alert("Калі ласка, увядзіце назву тэста");
-        alert(`Тэст "${title}" захаваны!`);
+      document.getElementById("addQuestionBtn")?.addEventListener("click", () => addQuestion());
+
+      // ========== АДЗІНЫ АПРАЦОЎШЧЫК ЗАХАВАННЯ ==========
+      document.getElementById("saveTestBtn").addEventListener("click", async () => {
+        const title = document.getElementById("testTitle").value.trim();
+        const time = parseInt(document.getElementById("testTime").value) || 20;
+        const classId = document.getElementById("classId").value;
+        const saveMessage = document.getElementById("saveMessage");
+
+        if (!title) {
+          saveMessage.style.color = "red";
+          saveMessage.textContent = "Увядзіце назву тэста";
+          return;
+        }
+
+        const questions = [];
+        let hasQuestions = false;
+
+        document.querySelectorAll(".question_card").forEach((card) => {
+          const questionText = card.querySelector(".question_text").value.trim();
+          const questionType = card.querySelector('input[type="radio"]:checked').value;
+          if (!questionText) return;
+
+          const qData = { text: questionText, type: questionType, answers: [], correctAnswer: null };
+
+          if (questionType === "text") {
+            qData.correctAnswer = card.querySelector(".text_correct_answer").value.trim();
+            if (!qData.correctAnswer) return;
+          } else {
+            card.querySelectorAll(".answer_row").forEach((row) => {
+              const answerText = row.querySelector(".answer_input").value.trim();
+              if (!answerText) return;
+              qData.answers.push({
+                text: answerText,
+                correct: row.querySelector(".correct_checkbox").checked,
+              });
+            });
+            if (qData.answers.length === 0) return;
+          }
+          questions.push(qData);
+          hasQuestions = true;
+        });
+
+        if (!hasQuestions) {
+          saveMessage.style.color = "red";
+          saveMessage.textContent = "Дадайце хаця б адно пытанне";
+          return;
+        }
+
+        saveMessage.style.color = "blue";
+        saveMessage.textContent = "Захаванне...";
+
+        try {
+          let testResult;
+          if (editTestId) {
+            testResult = await API.updateTest(editTestId, title, time);
+          } else {
+            testResult = await API.createTest(title, classId, time);
+          }
+
+          if (testResult.success) {
+            const savedTestId = editTestId || testResult.data.id;
+            const questionsResult = await API.saveTestQuestions(savedTestId, questions);
+
+            if (questionsResult.success) {
+              saveMessage.style.color = "green";
+              saveMessage.textContent = "Тэст з пытаннямі захаваны!";
+              setTimeout(() => {
+                window.location.href = `tests.html?class=${classId}`;
+              }, 1000);
+            } else {
+              saveMessage.style.color = "red";
+              saveMessage.textContent = "Памылка пытанняў: " + questionsResult.message;
+            }
+          } else {
+            saveMessage.style.color = "red";
+            saveMessage.textContent = "Памылка: " + (testResult.message || "невядомая");
+          }
+        } catch (error) {
+          saveMessage.style.color = "red";
+          saveMessage.textContent = "Памылка злучэння";
+        }
       });
 
-      addQuestion();
+      // Першае пытанне
+      if (!editTestId) {
+        addQuestion();
+      }
     </script>
-    // Праверка аўтарызацыі
-if (!API.isAuthenticated()) {
-    window.location.href = 'authorization.html';
-}
-
-// Праверка ролі
-if (!API.isTeacher()) {
-    alert('У вас няма доступу да гэтай старонкі');
-    Router.goBack();
-}
   </body>
 </html>

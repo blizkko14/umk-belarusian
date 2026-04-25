@@ -6,9 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $input = json_decode(file_get_contents('php://input'), true);
-if (!$input) {
-    $input = $_POST;
-}
+if (!$input) $input = $_POST;
 
 if (empty($input['title']) || empty($input['content']) || empty($input['class_id']) || empty($input['created_by'])) {
     sendResponse(false, 'Не все обязательные данные переданы');
@@ -19,35 +17,25 @@ $content = $input['content'];
 $class_id = intval($input['class_id']);
 $created_by = intval($input['created_by']);
 $attachments = isset($input['attachments']) ? $input['attachments'] : null;
+$linked_test_id = isset($input['linked_test_id']) && $input['linked_test_id'] ? intval($input['linked_test_id']) : null;
 
 try {
     $db = (new Database())->getConnection();
     
-    // Правяраем, ці існуе клас (табліца classes)
-    $checkStmt = $db->prepare("SELECT id FROM classes WHERE id = :class_id");
-    $checkStmt->bindParam(':class_id', $class_id);
-    $checkStmt->execute();
-    
-    if ($checkStmt->rowCount() === 0) {
-        sendResponse(false, 'Указанный класс не существует');
-    }
-    
-    $query = "INSERT INTO conspects (class_id, title, content, attachments, created_by) 
-              VALUES (:class_id, :title, :content, :attachments, :created_by)";
+    $query = "INSERT INTO conspects (class_id, title, content, attachments, linked_test_id, created_by) 
+              VALUES (:class_id, :title, :content, :attachments, :linked_test_id, :created_by)";
     
     $stmt = $db->prepare($query);
     $stmt->bindParam(':class_id', $class_id);
     $stmt->bindParam(':title', $title);
     $stmt->bindParam(':content', $content);
     $stmt->bindParam(':attachments', $attachments);
+    $stmt->bindParam(':linked_test_id', $linked_test_id);
     $stmt->bindParam(':created_by', $created_by);
     $stmt->execute();
     
-    $newId = $db->lastInsertId();
-    
-    sendResponse(true, 'Конспект успешно создан', ['id' => $newId]);
-    
+    sendResponse(true, 'Конспект создан', ['id' => $db->lastInsertId()]);
 } catch (PDOException $e) {
-    sendResponse(false, 'Ошибка сервера: ' . $e->getMessage());
+    sendResponse(false, 'Ошибка: ' . $e->getMessage());
 }
 ?>

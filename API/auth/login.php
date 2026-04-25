@@ -9,7 +9,7 @@ $input = json_decode(file_get_contents('php://input'), true);
 if (!$input) $input = $_POST;
 
 if (empty($input['username']) || empty($input['password'])) {
-    sendResponse(false, 'Введите логин и пароль');
+    sendResponse(false, 'Увядзіце лагін і пароль');
 }
 
 try {
@@ -18,11 +18,11 @@ try {
     $stmt->execute([$input['username'], $input['password']]);
     
     if ($stmt->rowCount() > 0) {
-        sendResponse(true, 'Вход выполнен', ['user' => $stmt->fetch()]);
+        sendResponse(true, 'Уваход выкананы', ['user' => $stmt->fetch()]);
     } else {
-        sendResponse(false, 'Неверный логин или пароль');
+        sendResponse(false, 'Няправільны лагін або пароль');
     }
 } catch (PDOException $e) {
-    sendResponse(false, 'Ошибка сервера: ' . $e->getMessage());
+    sendResponse(false, 'Памылка сервера: ' . $e->getMessage());
 }
 ?>

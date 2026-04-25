@@ -26,7 +26,7 @@
     </main>
     
     <script>
-        // ПРОСТЫ І ПРАЦОЎНЫ КОД АЎТАРЫЗАЦЫІ
+       
         document.getElementById('loginBtn').addEventListener('click', async function() {
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
@@ -52,10 +52,10 @@
                 console.log('Вынік:', result);
                 
                 if (result.success) {
-                    // Захоўваем даныя карыстальніка
+           
                     localStorage.setItem('currentUser', JSON.stringify(result.data.user));
                     errorMsg.textContent = '';
-                    // Пераходзім на галоўную старонку
+ 
                     window.location.href = 'section.html';
                 } else {
                     errorMsg.textContent = result.message || 'Няправільны лагін або пароль';
@@ -66,14 +66,13 @@
             }
         });
         
-        // Уваход па Enter
+
         document.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 document.getElementById('loginBtn').click();
             }
         });
-        
-        // Праверка, ці ўжо ўвайшоў
+      
         const user = localStorage.getItem('currentUser');
         if (user) {
             console.log('Карыстальнік ужо ўвайшоў, перанакіроўваем...');

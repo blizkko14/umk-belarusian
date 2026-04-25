@@ -28,15 +28,20 @@
           </div>
           
           <!-- Дадатковыя матэрыялы -->
-          <div class="dop_matirial" id="attachmentsSection">
+          <div class="dop_matirial" id="attachmentsSection" style="display: none;">
             <h2 class="title_dop_material">📎 Дадатковыя матэрыялы:</h2>
-            <div id="attachmentsList" style="margin-top: 15px;"></div>
+            <div id="attachmentsList" style="text-align: left; margin-top: 15px;"></div>
           </div>
           
           <!-- Кнопка тэста -->
           <button class="start_test" id="testBtn" style="display: none;">
             Прайсці тэст 
             <img src="./img/Arrow_teast.svg" alt="" class="arrow_test" />
+          </button>
+          
+          <!-- Кнопка рэдагавання (для настаўніка) -->
+          <button class="save_conspect_btn" id="editBtn" style="display: none; margin: 20px auto; cursor: pointer;">
+            ✏️ Рэдагаваць канспект
           </button>
         </div>
       </section>
@@ -75,16 +80,23 @@
                   // Змест
                   document.getElementById('conspectContent').innerHTML = conspect.content;
                   
-                  // Рэдагаванне (для настаўніка)
+                  // Кнопка рэдагавання (для настаўніка)
                   if (isTeacher) {
-                      const editBtn = document.createElement('button');
-                      editBtn.className = 'save_conspect_btn';
-                      editBtn.textContent = '✏️ Рэдагаваць канспект';
-                      editBtn.style.cssText = 'display: block; margin: 20px auto; cursor: pointer;';
-                      editBtn.addEventListener('click', () => {
+                      const editBtn = document.getElementById('editBtn');
+                      editBtn.style.display = 'block';
+                      editBtn.onclick = () => {
                           window.location.href = `forma_teory.html?class=${classNumber}&conspect_id=${conspectId}`;
-                      });
-                      document.querySelector('.container').appendChild(editBtn);
+                      };
+                  }
+                  
+                  // Прывязаны тэст
+                  if (conspect.linked_test_id) {
+                      const testBtn = document.getElementById('testBtn');
+                      testBtn.style.display = 'flex';
+                      testBtn.onclick = () => {
+                          // Перадаем ID канспекта, каб вярнуцца пасля тэста
+                          window.location.href = `test_student.html?id=${conspect.linked_test_id}&class=${classNumber}&conspect_id=${conspectId}`;
+                      };
                   }
                   
                   // Дадатковыя матэрыялы
@@ -95,34 +107,29 @@
                           if ((attachments.files && attachments.files.length > 0) || 
                               (attachments.links && attachments.links.length > 0)) {
                               
-                              document.getElementById('attachmentsSection').style.display = 'flex';
+                              document.getElementById('attachmentsSection').style.display = 'block';
                               const list = document.getElementById('attachmentsList');
                               let html = '';
                               
                               if (attachments.files && attachments.files.length > 0) {
-                                  html += '<div style="font-weight: bold; margin-bottom: 10px;">Файлы:</div>';
+                                  html += '<div style="font-weight: bold; margin-bottom: 10px;">📁 Файлы:</div>';
                                   attachments.files.forEach(file => {
                                       html += `<div style="margin-bottom: 8px;"><a href="${file.url}" target="_blank" style="color: #5f2d1e;">📄 ${file.name}</a></div>`;
                                   });
                               }
                               
                               if (attachments.links && attachments.links.length > 0) {
-                                  html += '<div style="font-weight: bold; margin-top: 15px; margin-bottom: 10px;"> Спасылкі:</div>';
+                                  html += '<div style="font-weight: bold; margin-top: 15px; margin-bottom: 10px;">🔗 Спасылкі:</div>';
                                   attachments.links.forEach(link => {
                                       html += `<div style="margin-bottom: 8px;"><a href="${link.url}" target="_blank" style="color: #5f2d1e;">🔗 ${link.title}</a></div>`;
                                   });
                               }
                               
                               list.innerHTML = html;
-                          } else {
-                              document.getElementById('attachmentsSection').style.display = 'none';
                           }
                       } catch (e) {
                           console.error('Памылка парсінгу attachments:', e);
-                          document.getElementById('attachmentsSection').style.display = 'none';
                       }
-                  } else {
-                      document.getElementById('attachmentsSection').style.display = 'none';
                   }
               } else {
                   document.getElementById('conspectTitle').textContent = 'Канспект не знойдзены';

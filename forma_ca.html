@@ -12,30 +12,26 @@
     <main>
         <section class="add-ce-page">
             <div class="container">
-                <!-- Хедер -->
                 <div class="add-ce-header">
-                    <button class="back_btn" onclick="history.back()">
+                    <button class="back_btn" id="backBtn">
                         <img src="./img/Arrow_back.svg" alt="Назад" class="back-arrow">
                     </button>
                     <div class="block_title">
-                        <h1 class="add-ce-title">Дадаць матэрыял да ЦЭ</h1>
+                        <h1 class="add-ce-title" id="pageTitle">Дадаць матэрыял да ЦЭ</h1>
                     </div>
                     <div class="placeholder_btn"></div>
                 </div>
 
-                <!-- Форма -->
                 <div class="add-ce-form">
-                    <!-- Тып матэрыяла -->
                     <div class="form_field">
                         <label class="form_label">📋 Тып матэрыяла</label>
                         <select id="ceMaterialType" class="form_select">
-                            <option value="test">📝 Тэст для падрыхтоўкі</option>
+                            <option value="test">📝 Тэст</option>
                             <option value="link">🔗 Спасылка</option>
                             <option value="image">🖼️ Выява</option>
                         </select>
                     </div>
 
-                    <!-- Агульныя палі -->
                     <div class="form_field">
                         <label class="form_label">Назва</label>
                         <input type="text" class="form_input" id="ceMaterialName" placeholder="Увядзіце назву матэрыяла">
@@ -44,17 +40,14 @@
                     <!-- БЛОК: ТЭСТ -->
                     <div id="testBlock" class="material-block">
                         <div class="form_field">
-                            <label class="form_label">Час (хвілін)</label>
-                            <input type="number" class="form_input" value="20" id="testTime">
+                            <label class="form_label">⏱️ Час (хвілін)</label>
+                            <input type="number" class="form_input" value="20" id="testTime" min="1">
                         </div>
 
-                        <!-- Секцыя пытанняў -->
                         <div class="questions_section">
                             <div class="questions_header">
                                 <label class="form_label">Пытанні</label>
-                                <button type="button" class="add_question_btn" id="addQuestionBtn">
-                                    + Дадаць пытанне
-                                </button>
+                                <button type="button" class="add_question_btn" id="addQuestionBtn">+ Дадаць пытанне</button>
                             </div>
                             <div id="questionsContainer"></div>
                         </div>
@@ -64,18 +57,14 @@
                     <div id="linkBlock" class="material-block" style="display: none;">
                         <div class="form_field">
                             <label class="form_label">URL-адрас</label>
-                            <input type="url" class="form_input" id="linkUrl" placeholder="https://example.com">
-                        </div>
-                        <div class="form_field">
-                            <label class="form_label">Апісанне (неабавязкова)</label>
-                            <input type="text" class="form_input" id="linkDescription" placeholder="Кароткае апісанне спасылкі">
+                            <input type="url" class="form_input" id="linkUrl" placeholder="https://...">
                         </div>
                     </div>
 
                     <!-- БЛОК: ВЫЯВА -->
                     <div id="imageBlock" class="material-block" style="display: none;">
                         <div class="form_field">
-                            <label class="form_label">Загрузіць выяву</label>
+                            <label class="form_label">Выява</label>
                             <input type="file" class="form_input" id="imageFile" accept="image/*">
                         </div>
                         <div id="imagePreviewContainer" class="image-preview" style="display: none;">
@@ -83,245 +72,293 @@
                         </div>
                     </div>
 
-                    <!-- Кнопка захавання -->
+                    <div id="saveMessage" style="text-align: center; margin-top: 10px;"></div>
+
                     <div class="form_actions">
-                        <button class="save_btn" id="saveCeMaterialBtn">Захаваць матэрыял</button>
+                        <button class="save_btn" id="saveCeMaterialBtn">💾 Захаваць матэрыял</button>
                     </div>
                 </div>
             </div>
         </section>
     </main>
 
+    <script src="js/api.js"></script>
     <script>
-        // Пераключэнне блокаў
-        const typeSelect = document.getElementById('ceMaterialType');
-        const testBlock = document.getElementById('testBlock');
-        const linkBlock = document.getElementById('linkBlock');
-        const imageBlock = document.getElementById('imageBlock');
+      if (!API.isAuthenticated()) {
+        window.location.href = 'authorization.html';
+      }
+      if (!API.isTeacher()) {
+        alert('У вас няма доступу да гэтай старонкі');
+        window.location.href = 'section.html';
+      }
 
-        function toggleMaterialBlocks() {
-            const type = typeSelect.value;
-            testBlock.style.display = type === 'test' ? 'block' : 'none';
-            linkBlock.style.display = type === 'link' ? 'block' : 'none';
-            imageBlock.style.display = type === 'image' ? 'block' : 'none';
-        }
+      const urlParams = new URLSearchParams(window.location.search);
+      const presetType = urlParams.get('type') || 'test';
+      const editId = urlParams.get('edit');
 
-        typeSelect.addEventListener('change', toggleMaterialBlocks);
-        toggleMaterialBlocks();
+      const typeSelect = document.getElementById('ceMaterialType');
+      const testBlock = document.getElementById('testBlock');
+      const linkBlock = document.getElementById('linkBlock');
+      const imageBlock = document.getElementById('imageBlock');
+      const saveMessage = document.getElementById('saveMessage');
+      let imageBase64 = null;
+      let questionCounter = 0;
 
-        // Перадпрагляд выявы
-        const imageFile = document.getElementById('imageFile');
-        const imagePreview = document.getElementById('imagePreview');
-        const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+      if (presetType === 'link') typeSelect.value = 'link';
+      else if (presetType === 'image') typeSelect.value = 'image';
+      else typeSelect.value = 'test';
 
-        imageFile.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    imagePreview.src = event.target.result;
-                    imagePreviewContainer.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            } else {
-                imagePreviewContainer.style.display = 'none';
+      function toggleBlocks() {
+        const type = typeSelect.value;
+        testBlock.style.display = type === 'test' ? 'block' : 'none';
+        linkBlock.style.display = type === 'link' ? 'block' : 'none';
+        imageBlock.style.display = type === 'image' ? 'block' : 'none';
+      }
+
+      typeSelect.addEventListener('change', toggleBlocks);
+      toggleBlocks();
+
+      document.getElementById('backBtn').addEventListener('click', () => {
+        window.location.href = 'ca.html';
+      });
+
+      if (editId) {
+        document.getElementById('pageTitle').textContent = 'Рэдагаваць матэрыял';
+        loadMaterialData(editId);
+      }
+
+      async function loadMaterialData(id) {
+        try {
+          const result = await API.getCEMaterials();
+          if (result.success && result.data.materials) {
+            const material = result.data.materials.find(m => m.id == id);
+            if (material) {
+              document.getElementById('ceMaterialName').value = material.title;
+              typeSelect.value = material.material_type;
+              toggleBlocks();
+              if (material.material_type === 'link') {
+                document.getElementById('linkUrl').value = material.content_url || '';
+              } else if (material.material_type === 'image') {
+                imageBase64 = material.image_data;
+                document.getElementById('imagePreview').src = material.image_data || '';
+                document.getElementById('imagePreviewContainer').style.display = 'block';
+              }
             }
+          }
+        } catch (e) {
+          console.error('Памылка загрузкі:', e);
+        }
+      }
+
+      // ========== ФУНКЦИИ ДЛЯ ТЕСТОВ ==========
+      function addQuestion(questionData = null) {
+        questionCounter++;
+        const container = document.getElementById('questionsContainer');
+        const questionId = Date.now() + Math.random();
+        const questionDiv = document.createElement('div');
+        questionDiv.className = 'question_card';
+        questionDiv.dataset.id = questionId;
+        questionDiv.innerHTML = `
+          <div class="question_header">
+            <span class="question_title">Пытанне ${questionCounter}</span>
+            <button class="remove_question_btn" onclick="this.closest('.question_card').remove(); updateNumbers();">✖</button>
+          </div>
+          <input type="text" class="question_text" placeholder="Тэкст пытання" value="${questionData ? questionData.text : ''}">
+          <div class="question_type">
+            <label><input type="radio" name="type_${questionId}" value="single" class="type_radio" ${!questionData || questionData.type === 'single' ? 'checked' : ''} onchange="toggleAnswersContainer(this)"> Адзінарны выбар</label>
+            <label><input type="radio" name="type_${questionId}" value="multiple" class="type_radio" ${questionData && questionData.type === 'multiple' ? 'checked' : ''} onchange="toggleAnswersContainer(this)"> Множны выбар</label>
+            <label><input type="radio" name="type_${questionId}" value="text" class="type_radio" ${questionData && questionData.type === 'text' ? 'checked' : ''} onchange="toggleAnswersContainer(this)"> Увод радка</label>
+          </div>
+          <div class="answers_container" style="${questionData && questionData.type === 'text' ? 'display:none;' : ''}"></div>
+          <div class="text_answer_container" style="${questionData && questionData.type === 'text' ? 'display:block;' : 'display:none;'}">
+            <input type="text" class="text_correct_answer" placeholder="Увядзіце правільны адказ" value="${questionData && questionData.correctAnswer ? questionData.correctAnswer : ''}">
+            <div class="text-answer-hint">Адказ будзе правярацца без уліку рэгістра</div>
+          </div>
+          <button class="add_answer_btn" onclick="addAnswer(this)" style="${questionData && questionData.type === 'text' ? 'display:none;' : ''}">+ Дадаць адказ</button>
+        `;
+        container.appendChild(questionDiv);
+        if (questionData && questionData.answers && questionData.type !== 'text') {
+          const answersContainer = questionDiv.querySelector('.answers_container');
+          questionData.answers.forEach(answer => {
+            addAnswerToContainer(answersContainer, answer.text, answer.correct);
+          });
+        } else if (!questionData) {
+          addAnswer(questionDiv.querySelector('.add_answer_btn'));
+        }
+      }
+
+      function addAnswerToContainer(container, text = '', isCorrect = false) {
+        const answerRow = document.createElement('div');
+        answerRow.className = 'answer_row';
+        answerRow.innerHTML = `
+          <input type="text" class="answer_input" placeholder="Варыянт адказу" value="${text}">
+          <label><input type="checkbox" class="correct_checkbox" ${isCorrect ? 'checked' : ''}> Правільны</label>
+          <button class="remove_answer_btn" onclick="this.parentElement.remove()">✖</button>
+        `;
+        container.appendChild(answerRow);
+      }
+
+      window.addAnswer = function(button) {
+        const container = button.closest('.question_card').querySelector('.answers_container');
+        addAnswerToContainer(container);
+      };
+
+      window.toggleAnswersContainer = function(radio) {
+        const card = radio.closest('.question_card');
+        const answersContainer = card.querySelector('.answers_container');
+        const textAnswerContainer = card.querySelector('.text_answer_container');
+        const addAnswerBtn = card.querySelector('.add_answer_btn');
+        const isTextType = radio.value === 'text';
+        if (isTextType) {
+          answersContainer.style.display = 'none';
+          textAnswerContainer.style.display = 'block';
+          addAnswerBtn.style.display = 'none';
+        } else {
+          answersContainer.style.display = 'block';
+          textAnswerContainer.style.display = 'none';
+          addAnswerBtn.style.display = 'inline-block';
+          if (answersContainer.children.length === 0) addAnswer(addAnswerBtn);
+        }
+      };
+
+      window.updateNumbers = function() {
+        const questions = document.querySelectorAll('.question_card');
+        questions.forEach((q, i) => {
+          q.querySelector('.question_title').textContent = `Пытанне ${i + 1}`;
         });
+        questionCounter = questions.length;
+      };
 
-        // Логіка тэстаў
-        let questionCounter = 0;
+      document.getElementById('addQuestionBtn')?.addEventListener('click', () => addQuestion());
 
-        function addQuestion() {
-            questionCounter++;
-            const container = document.getElementById('questionsContainer');
-            const questionId = Date.now() + Math.random();
+      document.getElementById('imageFile').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(ev) {
+            document.getElementById('imagePreview').src = ev.target.result;
+            document.getElementById('imagePreviewContainer').style.display = 'block';
+            imageBase64 = ev.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+      });
 
-            const questionDiv = document.createElement('div');
-            questionDiv.className = 'question_card';
-            questionDiv.dataset.id = questionId;
-            questionDiv.innerHTML = `
-                <div class="question_header">
-                    <span class="question_title">Пытанне ${questionCounter}</span>
-                    <button class="remove_question_btn" onclick="this.closest('.question_card').remove()">✖</button>
-                </div>
-                <input type="text" class="question_text" placeholder="Тэкст пытання">
-                <div class="question_type">
-                    <label><input type="radio" name="type_${questionId}" value="single" class="type_radio" checked onchange="toggleAnswersContainer(this)"> Адзінарны выбар</label>
-                    <label><input type="radio" name="type_${questionId}" value="multiple" class="type_radio" onchange="toggleAnswersContainer(this)"> Множны выбар</label>
-                    <label><input type="radio" name="type_${questionId}" value="text" class="type_radio" onchange="toggleAnswersContainer(this)"> Увод радка</label>
-                </div>
-                <div class="answers_container"></div>
-                <div class="text_answer_container" style="display: none;">
-                    <input type="text" class="text_correct_answer" placeholder="Увядзіце правільны адказ">
-                    <div class="text-answer-hint">Адказ будзе правярацца без уліку рэгістра</div>
-                </div>
-                <button class="add_answer_btn" onclick="addAnswer(this)">+ Дадаць адказ</button>
-            `;
-            container.appendChild(questionDiv);
-            addAnswer(questionDiv.querySelector('.add_answer_btn'));
+      // Сохранение
+      document.getElementById('saveCeMaterialBtn').addEventListener('click', async () => {
+        const materialType = typeSelect.value;
+        const title = document.getElementById('ceMaterialName').value.trim();
+
+        if (!title) {
+          saveMessage.style.color = 'red';
+          saveMessage.textContent = 'Увядзіце назву матэрыяла';
+          return;
         }
 
-        function addAnswer(button) {
-            const container = button.closest('.question_card').querySelector('.answers_container');
-            const answerRow = document.createElement('div');
-            answerRow.className = 'answer_row';
-            answerRow.innerHTML = `
-                <input type="text" class="answer_input" placeholder="Варыянт адказу">
-                <label><input type="checkbox" class="correct_checkbox"> Правільны</label>
-                <button class="remove_answer_btn" onclick="this.parentElement.remove()">✖</button>
-            `;
-            container.appendChild(answerRow);
-        }
+        saveMessage.style.color = 'blue';
+        saveMessage.textContent = 'Захаванне...';
 
-        function toggleAnswersContainer(radio) {
-            const card = radio.closest('.question_card');
-            const answersContainer = card.querySelector('.answers_container');
-            const textAnswerContainer = card.querySelector('.text_answer_container');
-            const addAnswerBtn = card.querySelector('.add_answer_btn');
-            const isTextType = radio.value === 'text';
+        const data = { title, material_type: materialType };
 
-            if (isTextType) {
-                answersContainer.style.display = 'none';
-                textAnswerContainer.style.display = 'block';
-                addAnswerBtn.style.display = 'none';
+        if (materialType === 'test') {
+          const questions = [];
+          let hasQuestions = false;
+
+          document.querySelectorAll('.question_card').forEach(card => {
+            const questionText = card.querySelector('.question_text').value.trim();
+            const questionType = card.querySelector('input[type="radio"]:checked').value;
+            if (!questionText) return;
+
+            const qData = { text: questionText, type: questionType, answers: [], correctAnswer: null };
+
+            if (questionType === 'text') {
+              qData.correctAnswer = card.querySelector('.text_correct_answer').value.trim();
+              if (!qData.correctAnswer) return;
             } else {
-                answersContainer.style.display = 'block';
-                textAnswerContainer.style.display = 'none';
-                addAnswerBtn.style.display = 'inline-block';
-                if (answersContainer.children.length === 0) addAnswer(addAnswerBtn);
-            }
-        }
-
-        document.getElementById('addQuestionBtn')?.addEventListener('click', addQuestion);
-        addQuestion();
-
-        // Захаванне
-        document.getElementById('saveCeMaterialBtn').addEventListener('click', function() {
-            const materialType = typeSelect.value;
-            const materialName = document.getElementById('ceMaterialName').value;
-
-            if (!materialName) {
-                alert('Калі ласка, увядзіце назву матэрыяла');
-                return;
-            }
-
-            let materialData = {
-                type: materialType,
-                name: materialName,
-                date: new Date().toISOString()
-            };
-
-            if (materialType === 'test') {
-                const testTime = document.getElementById('testTime').value;
-                
-                const questions = [];
-                let questionsCount = 0;
-                
-                document.querySelectorAll('.question_card').forEach(card => {
-                    const questionText = card.querySelector('.question_text').value;
-                    const questionType = card.querySelector('input[type="radio"]:checked').value;
-                    
-                    const questionData = {
-                        text: questionText,
-                        type: questionType,
-                        answers: []
-                    };
-
-                    if (questionType === 'text') {
-                        const correctAnswer = card.querySelector('.text_correct_answer').value;
-                        questionData.correctAnswer = correctAnswer;
-                    } else {
-                        card.querySelectorAll('.answer_row').forEach(row => {
-                            const answerText = row.querySelector('.answer_input').value;
-                            const isCorrect = row.querySelector('.correct_checkbox').checked;
-                            if (answerText) {
-                                questionData.answers.push({
-                                    text: answerText,
-                                    correct: isCorrect
-                                });
-                            }
-                        });
-                    }
-
-                    if (questionText) {
-                        questions.push(questionData);
-                        questionsCount++;
-                    }
+              card.querySelectorAll('.answer_row').forEach(row => {
+                const answerText = row.querySelector('.answer_input').value.trim();
+                if (!answerText) return;
+                qData.answers.push({
+                  text: answerText,
+                  correct: row.querySelector('.correct_checkbox').checked
                 });
-
-                if (questionsCount === 0) {
-                    alert('Калі ласка, дадайце хаця б адно пытанне');
-                    return;
-                }
-
-                materialData.testData = {
-                    time: testTime,
-                    questionsCount: questionsCount,
-                    questions: questions
-                };
-
-                const ceTests = JSON.parse(localStorage.getItem('ceTests') || '[]');
-                ceTests.push(materialData);
-                localStorage.setItem('ceTests', JSON.stringify(ceTests));
-
-                alert(`Тэст "${materialName}" (${questionsCount} пытанняў) паспяхова захаваны!`);
-                
-            } else if (materialType === 'link') {
-                const linkUrl = document.getElementById('linkUrl').value;
-                const linkDescription = document.getElementById('linkDescription').value;
-
-                if (!linkUrl) {
-                    alert('Калі ласка, увядзіце URL-адрас');
-                    return;
-                }
-
-                materialData.url = linkUrl;
-                materialData.description = linkDescription;
-
-                const ceMaterials = JSON.parse(localStorage.getItem('ceMaterials') || '[]');
-                ceMaterials.push(materialData);
-                localStorage.setItem('ceMaterials', JSON.stringify(ceMaterials));
-
-                alert(`Спасылка "${materialName}" паспяхова захавана!`);
-                
-            } else if (materialType === 'image') {
-                const imageFileInput = document.getElementById('imageFile');
-                const file = imageFileInput.files[0];
-
-                if (!file) {
-                    alert('Калі ласка, выберыце выяву');
-                    return;
-                }
-
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    materialData.imageData = event.target.result;
-                    materialData.imageName = file.name;
-
-                    const ceMaterials = JSON.parse(localStorage.getItem('ceMaterials') || '[]');
-                    ceMaterials.push(materialData);
-                    localStorage.setItem('ceMaterials', JSON.stringify(ceMaterials));
-
-                    alert(`Выява "${materialName}" паспяхова захавана!`);
-                    window.location.href = 'ce.html';
-                };
-                reader.readAsDataURL(file);
-                return;
+              });
+              if (qData.answers.length === 0) return;
             }
+            questions.push(qData);
+            hasQuestions = true;
+          });
 
-            window.location.href = 'ca.html';
-                // Праверка аўтарызацыі
-if (!API.isAuthenticated()) {
-    window.location.href = 'authorization.html';
-}
+          if (!hasQuestions) {
+            saveMessage.style.color = 'red';
+            saveMessage.textContent = 'Дадайце хаця б адно пытанне';
+            return;
+          }
 
-// Праверка ролі
-if (!API.isTeacher()) {
-    alert('У вас няма доступу да гэтай старонкі');
-    Router.goBack();
-}
-        });
+          const testTime = parseInt(document.getElementById('testTime').value) || 20;
+
+          try {
+            // ✅ Создаём тест с class_id = 0 (только для ЦЭ)
+            const testResult = await API.createTest(title, null, testTime);
+            if (testResult.success) {
+              const savedTestId = testResult.data.id;
+              await API.saveTestQuestions(savedTestId, questions);
+              data.test_id = savedTestId;
+            } else {
+              saveMessage.style.color = 'red';
+              saveMessage.textContent = 'Памылка стварэння тэста';
+              return;
+            }
+          } catch (e) {
+            saveMessage.style.color = 'red';
+            saveMessage.textContent = 'Памылка злучэння';
+            return;
+          }
+        } else if (materialType === 'link') {
+          const url = document.getElementById('linkUrl').value.trim();
+          if (!url) {
+            saveMessage.style.color = 'red';
+            saveMessage.textContent = 'Увядзіце URL';
+            return;
+          }
+          data.content_url = url;
+        } else if (materialType === 'image') {
+          if (!imageBase64) {
+            saveMessage.style.color = 'red';
+            saveMessage.textContent = 'Выберыце выяву';
+            return;
+          }
+          data.image_data = imageBase64;
+        }
+
+        try {
+          let result;
+          if (editId) {
+            data.id = editId;
+            result = await API.updateCEMaterial(data);
+          } else {
+            result = await API.createCEMaterial(data);
+          }
+
+          if (result.success) {
+            saveMessage.style.color = 'green';
+            saveMessage.textContent = 'Матэрыял захаваны!';
+            setTimeout(() => {
+              window.location.href = 'ca.html';
+            }, 1000);
+          } else {
+            saveMessage.style.color = 'red';
+            saveMessage.textContent = 'Памылка: ' + (result.message || '');
+          }
+        } catch (e) {
+          saveMessage.style.color = 'red';
+          saveMessage.textContent = 'Памылка злучэння';
+        }
+      });
+
+      if (presetType === 'test' && !editId) {
+        addQuestion();
+      }
     </script>
-
 </body>
 </html>

@@ -166,4 +166,11 @@ class API {
     static async deleteCEMaterial(id) {
         return await this.request('cematerials/delete.php', 'POST', { id });
     }
+    // Сохранение вопросов теста
+static async saveTestQuestions(testId, questions) {
+    return await this.request('tests/save-questions.php', 'POST', {
+        test_id: testId,
+        questions: questions
+    });
+}
 }
